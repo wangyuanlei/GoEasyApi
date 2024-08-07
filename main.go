@@ -48,6 +48,19 @@ func main() {
 		ctx.JSON(200, gin.H{"data": results})
 	})
 
+	ginServer.POST("/sql", func(ctx *gin.Context) {
+		var pageInfo struct {
+			PageNo   int `json:"pageNo"`
+			PageSize int `json:"pageSize"`
+		}
+		if err := ctx.ShouldBindJSON(&pageInfo); err != nil {
+			ctx.JSON(400, gin.H{"error": "Invalid request body"})
+			return
+		}
+		results := database.GetListPage(pageInfo.PageNo, pageInfo.PageSize)
+		ctx.JSON(200, gin.H{"data": results})
+	})
+
 	ginServer.GET("/api/*path", func(ctx *gin.Context) {
 		path := ctx.Request.URL.Path
 		ctx.JSON(200, gin.H{"path": path})
