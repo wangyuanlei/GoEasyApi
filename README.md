@@ -31,4 +31,9 @@
     go mod init GoEasyApi  #初始化项目
     go get -u github.com/gin-gonic/gin  #当前项目加载 gin 框架
     go run main.go  #启动go
-
+    go build  #打包项目
+    go test -v  #测试项目
+    go mod tidy  #整理依赖
+    go version  #查看go版本
+    go env  #查看go环境
+ 
