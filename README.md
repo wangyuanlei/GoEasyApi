@@ -13,11 +13,12 @@
 2.  xxxx
 3.  xxxx
 
-#### 使用说明
+#### 目录说明
+    libraries       //功能库
+    model           //模块库
+    database        //各种数据库支持
+    main.go         //启动文件
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
 
 #### 结构逻辑说明
     1. 接口 层级为  服务 -> 分组 -> 接口

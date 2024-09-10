@@ -3,26 +3,8 @@ config:
   sqlite: database.db
   ipFilterMode: whitelist  #使用白名单 还是 黑名单
   cache: true #是否使用缓存. 
-
-datebase:
-  type: mysql  #支持 mysql pgsql sqlserver  oracle sqlite
-  dsn : admin:Qwert!@#456@tcp(43.254.227.159:33066)/gwSysBase?charset=utf8&parseTime=True&loc=Local
-
 redis:  #redis 配置
   ip: 127.0.0.1
   port: 6379
   password: Qwert!2024
   db: 0
-
-admin: #管理员信息
-  account: lni_wang
-  password: 12323史蒂夫4sdfsdf
-
-whitelist: #白名单信列表
-  - 127.0.0.1
-  - 192.168.*
-  - 172.16.*
-
-blacklist: #黑名单列表
-  - 49.122.12.11
-  - 49.122.12.22
