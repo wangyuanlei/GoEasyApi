@@ -1,10 +1,5 @@
 
-config:
-  sqlite: database.db
-  ipFilterMode: whitelist  #使用白名单 还是 黑名单
-  cache: true #是否使用缓存. 
-redis:  #redis 配置
-  ip: 127.0.0.1
-  port: 6379
-  password: Qwert!2024
-  db: 0
+database: ./database/init.db
+user:
+  username: admin
+  password: admin

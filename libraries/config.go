@@ -1,46 +1,76 @@
 package libraries
 
 import (
-	"io/ioutil"
-	"log"
+	"os"
 
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 )
 
+// Config 结构体用于保存配置数据
 type Config struct {
-	Database struct {
-		Sqlite string `yaml:"sqlite"`
-	} `yaml:"config"`
-	IpFilterMode string `yaml:"ipFilterMode"`
-	Cache        bool   `yaml:"cache"`
-	Redis        struct {
-		Ip       string `yaml:"ip"`
-		Port     int    `yaml:"port"`
+	Database string `yaml:"database"`
+	User     struct {
+		Username string `yaml:"username"`
 		Password string `yaml:"password"`
-		Db       int    `yaml:"db"`
-	} `yaml:"redis"`
+	} `yaml:"user"`
 }
 
-var Conf Config
-
-func InitConfig() {
-	yamlFile, err := ioutil.ReadFile("./config.yml")
+// LoadConfig 函数用于从配置文件加载配置
+func LoadConfig() (Config, error) {
+	var config Config
+	data, err := os.ReadFile("config.yml") // 更新为使用 os.ReadFile
 	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		return config, err
 	}
-	err = yaml.Unmarshal(yamlFile, &Conf)
+	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		return config, err
 	}
+	return config, nil
 }
 
-func WriteConfig() {
-	yamlData, err := yaml.Marshal(&Conf)
+// SaveConfig 函数用于将配置保存到配置文件
+func SaveConfig(config Config) error {
+	data, err := yaml.Marshal(&config)
 	if err != nil {
-		log.Fatalf("Marshal: %v", err)
+		return err
 	}
-	err = ioutil.WriteFile("config.yml", yamlData, 0644)
+	err = os.WriteFile("config.yml", data, 0644) // 更新为使用 os.WriteFile
 	if err != nil {
-		log.Fatalf("WriteFile: %v", err)
+		return err
 	}
+	return nil
+}
+
+// LoadDatabaseConfig 函数用于从配置文件加载数据库配置
+func LoadDatabaseConfig() (string, error) {
+	config, err := LoadConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.Database, nil
+}
+
+// LoadUserConfig 函数用于从配置文件加载用户配置
+func LoadUserConfig() (string, string, error) {
+	config, err := LoadConfig()
+	if err != nil {
+		return "", "", err
+	}
+	return config.User.Username, config.User.Password, nil
+}
+
+// SaveUserConfig 函数用于将用户配置保存到配置文件
+func SaveUserConfig(username, password string) error {
+	config, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+	config.User.Username = username
+	config.User.Password = password
+	err = SaveConfig(config)
+	if err != nil {
+		return err
+	}
+	return nil
 }
