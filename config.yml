@@ -1,5 +1,6 @@
 
 database: ./database/init.db
+whitelist_config: 0
 user:
   username: admin
   password: admin

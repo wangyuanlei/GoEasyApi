@@ -8,8 +8,9 @@ import (
 
 // Config 结构体用于保存配置数据
 type Config struct {
-	Database string `yaml:"database"`
-	User     struct {
+	Database        string `yaml:"database"`
+	WhitelistConfig int    `yaml:"whitelist_config"` // 0表示不使用，1表示使用白名单，2表示使用黑名单
+	User            struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 	} `yaml:"user"`
@@ -68,6 +69,29 @@ func SaveUserConfig(username, password string) error {
 	}
 	config.User.Username = username
 	config.User.Password = password
+	err = SaveConfig(config)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadWhitelistConfig 函数用于从配置文件加载白名单配置
+func LoadWhitelistConfig() (int, error) {
+	config, err := LoadConfig()
+	if err != nil {
+		return 0, err
+	}
+	return config.WhitelistConfig, nil
+}
+
+// SaveWhitelistConfig 函数用于将白名单配置保存到配置文件
+func SaveWhitelistConfig(whitelistConfig int) error {
+	config, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+	config.WhitelistConfig = whitelistConfig
 	err = SaveConfig(config)
 	if err != nil {
 		return err
