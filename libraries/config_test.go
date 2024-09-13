@@ -20,11 +20,12 @@ func TestLoadConfig(t *testing.T) {
 			Password: "test_password",
 		},
 	}
+
 	data, err := yaml.Marshal(&config)
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("config.yml", data, 0644)
+	err = os.WriteFile("../config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,6 +36,8 @@ func TestLoadConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Logf("加载的配置: %+v", loadedConfig)
 
 	// 检查加载的配置
 	if loadedConfig.Database != config.Database {
@@ -54,14 +57,14 @@ func TestLoadConfig(t *testing.T) {
 func TestSaveConfig(t *testing.T) {
 	// 创建一个测试配置
 	config := Config{
-		Database:        "test_database",
-		WhitelistConfig: 1,
+		Database:        "test_database22",
+		WhitelistConfig: 0,
 		User: struct {
 			Username string `yaml:"username"`
 			Password string `yaml:"password"`
 		}{
-			Username: "test_user",
-			Password: "test_password",
+			Username: "test_user11",
+			Password: "test_password22",
 		},
 	}
 
@@ -102,21 +105,22 @@ func TestLoadDatabaseConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("config.yml", data, 0644)
+	err = os.WriteFile("../config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("config.yml")
+	defer os.Remove("../config.yml")
 
 	// 加载数据库配置
+	expectedDatabase := "test_database"
 	database, err := LoadDatabaseConfig()
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// 检查加载的数据库配置
-	if database != config.Database {
-		t.Errorf("期望的数据库 %s, 得到的 %s", config.Database, database)
+	if database != expectedDatabase {
+		t.Errorf("期望的数据库 %s, 得到的 %s", expectedDatabase, database)
 	}
 }
 
@@ -135,11 +139,11 @@ func TestLoadUserConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("config.yml", data, 0644)
+	err = os.WriteFile("../config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("config.yml")
+	defer os.Remove("../config.yml")
 
 	// 加载用户配置
 	username, password, err := LoadUserConfig()
@@ -163,8 +167,8 @@ func TestSaveUserConfig(t *testing.T) {
 			Username string `yaml:"username"`
 			Password string `yaml:"password"`
 		}{
-			Username: "test_user",
-			Password: "test_password",
+			Username: "test_user22",
+			Password: "test_password22",
 		},
 	}
 
@@ -193,17 +197,17 @@ func TestSaveUserConfig(t *testing.T) {
 func TestLoadWhitelistConfig(t *testing.T) {
 	// 创建一个测试配置文件
 	config := Config{
-		WhitelistConfig: 1,
+		WhitelistConfig: 2,
 	}
 	data, err := yaml.Marshal(&config)
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("config.yml", data, 0644)
+	err = os.WriteFile("../config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("config.yml")
+	defer os.Remove("../config.yml")
 
 	// 加载白名单配置
 	whitelistConfig, err := LoadWhitelistConfig()
@@ -220,7 +224,7 @@ func TestLoadWhitelistConfig(t *testing.T) {
 func TestSaveWhitelistConfig(t *testing.T) {
 	// 创建一个测试配置
 	config := Config{
-		WhitelistConfig: 1,
+		WhitelistConfig: 2,
 	}
 
 	// 保存白名单配置
@@ -228,7 +232,7 @@ func TestSaveWhitelistConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("config.yml")
+	defer os.Remove("../config.yml")
 
 	// 加载保存的白名单配置
 	loadedWhitelistConfig, err := LoadWhitelistConfig()
