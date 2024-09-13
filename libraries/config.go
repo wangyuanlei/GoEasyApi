@@ -19,7 +19,7 @@ type Config struct {
 // LoadConfig 函数用于从配置文件加载配置
 func LoadConfig() (Config, error) {
 	var config Config
-	data, err := os.ReadFile("config.yml") // 更新为使用 os.ReadFile
+	data, err := os.ReadFile("../config.yml") // 更新为使用 os.ReadFile
 	if err != nil {
 		return config, err
 	}
@@ -36,7 +36,7 @@ func SaveConfig(config Config) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("config.yml", data, 0644) // 更新为使用 os.WriteFile
+	err = os.WriteFile("../config.yml", data, 0644) // 更新为使用 os.WriteFile
 	if err != nil {
 		return err
 	}
