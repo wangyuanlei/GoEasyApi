@@ -1,6 +1,7 @@
 package libraries
 
 import (
+	"GoEasyApi/helper"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -68,7 +69,7 @@ func SaveUserConfig(username, password string) error {
 		return err
 	}
 	config.User.Username = username
-	config.User.Password = password
+	config.User.Password = helper.HashPassword(password)
 	err = SaveConfig(config)
 	if err != nil {
 		return err

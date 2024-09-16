@@ -1,60 +1,30 @@
 package libraries
 
 import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"GoEasyApi/database"
+	"log"
+	"os"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func InitSqlite() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("./database.db"), &gorm.Config{})
+func InitDatabase() {
+	dbPath, err := LoadDatabaseConfig()
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatal(err)
 	}
 
-	// Create admin table and insert default user
-	type Admin struct {
-		Account  string
-		Password string
+	// Check if the database file exists
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		// If the database file does not exist, create it and initialize the tables
+		db, err := gorm.Open("sqlite3", dbPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		// Auto migrate the tables
+		db.AutoMigrate(&database.WhiteList{}, &database.BlackList{}, &database.Database{}, &database.Interface{}, &database.Params{}, &database.User{}, &database.Token{})
 	}
-	db.AutoMigrate(&Admin{})
-	db.Create(&Admin{Account: "admin", Password: "admin"})
-
-	// Create config table
-	db.AutoMigrate(struct {
-		Key   string
-		Value string
-	}{})
-	// Add a configuration. Currently using whitelist or blacklist
-	db.Create(&struct {
-		Key   string
-		Value string
-	}{Key: "ipFilterMode", Value: "whitelist"})
-
-	// Create redis configuration
-	db.AutoMigrate(struct {
-		Ip       string
-		Port     int
-		Password string
-		Db       int
-	}{})
-
-	// Add a redis configuration
-	db.Create(&struct {
-		Ip       string
-		Port     int
-		Password string
-		Db       int
-	}{Ip: "127.0.0.1", Port: 6379, Password: "Qwert!2024", Db: 0})
-
-	// Create whitelist table
-	db.AutoMigrate(struct {
-		IP string
-	}{})
-
-	// Create blacklist table
-	db.AutoMigrate(struct {
-		IP string
-	}{})
-
-	return db
 }

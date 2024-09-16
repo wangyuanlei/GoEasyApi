@@ -44,3 +44,5 @@
     go version  #查看go版本
     go env  #查看go环境
  
+    go env -w CGO_ENABLED=1  #编译sqlite数据库 需要这个设置
+    

@@ -1,5 +1,5 @@
-database: ./database/init.db
-whitelist_config: 0
+database: ../db.sql
+whitelist_config: 2
 user:
-  username: test_user
-  password: test_password
+  username: testUser
+  password: 88dde1469b43f8baf4f6340c0590f76e
