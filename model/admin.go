@@ -47,7 +47,7 @@ func (a *Admin) Login(username, password string) (string, error) {
 
 	// 对比 username 和 password
 	if username != configUsername || pass != configPassword {
-		return "", libraries.CreateCustomError(500, "配置错误")
+		return "", libraries.CreateCustomError(500, "账号或者密码错误")
 	}
 
 	// 生成 uuid 作为 token

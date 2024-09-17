@@ -1,5 +1,5 @@
 database: ../db.sql
 whitelist_config: 2
 user:
-  username: testUser
+  username: admin
   password: 88dde1469b43f8baf4f6340c0590f76e
