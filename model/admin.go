@@ -36,6 +36,17 @@ import (
 type Admin struct{}
 
 // 登录验证功能
+// Login 实现了Admin结构体的登录方法
+//
+// 参数：
+//
+//	username string - 登录用户名
+//	password string - 登录密码
+//
+// 返回值：
+//
+//	string - 登录成功后返回的token
+//	error - 登录失败时返回的错误信息
 func (a *Admin) Login(username, password string) (string, error) {
 	// 从配置获得 username 和 password
 	configUsername, configPassword, err := libraries.LoadUserConfig()
@@ -60,6 +71,17 @@ func (a *Admin) Login(username, password string) (string, error) {
 }
 
 // 验证登录
+// ValidateLogin 验证登录 token 是否有效
+//
+// 参数：
+//
+//	a *Admin - Admin 结构体指针
+//	token string - 登录 token
+//
+// 返回值：
+//
+//	string - 用户名，如果验证失败则为空字符串
+//	error - 错误信息，如果验证成功则为 nil
 func (a *Admin) ValidateLogin(token string) (string, error) {
 	// 验证 token 是否在 cache 缓存中存在
 	_userName, IsExists := libraries.GetCache(token)

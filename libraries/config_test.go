@@ -1,6 +1,7 @@
 package libraries
 
 import (
+	"GoEasyApi/helper"
 	"os"
 	"testing"
 
@@ -25,7 +26,7 @@ func TestLoadConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("../config.yml", data, 0644)
+	err = os.WriteFile("config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,7 +129,7 @@ func TestLoadUserConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("../config.yml", data, 0644)
+	err = os.WriteFile("config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -166,7 +167,7 @@ func TestSaveUserConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("../config.yml", data, 0644)
+	err = os.WriteFile("config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -204,7 +205,7 @@ func TestLoadWhitelistConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("../config.yml", data, 0644)
+	err = os.WriteFile("config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -224,14 +225,14 @@ func TestLoadWhitelistConfig(t *testing.T) {
 func TestSaveWhitelistConfig(t *testing.T) {
 	// 创建一个测试配置文件
 	config := Config{
-		Database:        "../db.sql",
-		WhitelistConfig: 2,
+		Database:        "db.sql",
+		WhitelistConfig: 1,
 		User: struct {
 			Username string `yaml:"username"`
 			Password string `yaml:"password"`
 		}{
 			Username: "admin",
-			Password: "admin",
+			Password: helper.HashPassword("admin"),
 		},
 	}
 
@@ -239,7 +240,7 @@ func TestSaveWhitelistConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = os.WriteFile("../config.yml", data, 0644)
+	err = os.WriteFile("config.yml", data, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}

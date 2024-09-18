@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"GoEasyApi/helper"
+	"GoEasyApi/libraries"
 	"GoEasyApi/model"
 
 	"github.com/gin-gonic/gin"
@@ -13,16 +15,20 @@ func MangerLogin(ctx *gin.Context) {
 	}
 
 	if err := ctx.ShouldBindJSON(&loginData); err != nil {
-		ctx.JSON(400, gin.H{"error": "请求数据格式错误"})
+		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
 		return
 	}
 
 	admin := model.Admin{}
 	token, err := admin.Login(loginData.Username, loginData.Password)
 	if err != nil {
-		ctx.JSON(200, gin.H{"error": err.Error()})
+		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
+			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
+		} else {
+			helper.ApiError(ctx, 601, myErr.Error(), nil)
+		}
 		return
 	}
 
-	ctx.JSON(200, gin.H{"token": token})
+	helper.ApiSuccess(ctx, token)
 }
