@@ -1,6 +1,8 @@
 package database
 
-import "time"
+import (
+	"time"
+)
 
 type WhiteList struct {
 	IP          string `gorm:"type:varchar(15)"` // 允许访问的IP地址
@@ -70,7 +72,6 @@ type Database struct {
 		default 默认值
 		example 示例值
 		regex 正则表达式
-
 */
 type Interface struct {
 	InterfaceId            string `gorm:"type:varchar(32);primary_key"` // 接口编号
@@ -124,6 +125,7 @@ type User struct {
 /*
 表: token
 字段:
+
 	token 登录验证token
 	user_id 用户id
 	valid_time 有效时间
