@@ -66,12 +66,37 @@ func (c *Config) SetSuperAdminPassword(oldpass string, newpass string) error {
 	if helper.HashPassword(oldpass) != password {
 		return libraries.CreateCustomError(500, "旧密码错误")
 	}
+	// 检查旧密码和新密码是否相同
+	if oldpass == newpass {
+		return libraries.CreateCustomError(500, "新密码不能与旧密码相同")
+	}
 
-	// 设置新密码
-	newPassword := helper.HashPassword(newpass)
+	// 检查新密码长度是否小于6位
+	if len(newpass) < 6 {
+		return libraries.CreateCustomError(500, "新密码长度不能小于6位")
+	}
+
+	// 检查新密码是否包含数字、字母和符号
+	hasNumber := false
+	hasLetter := false
+	hasSymbol := false
+	for _, char := range newpass {
+		switch {
+		case char >= '0' && char <= '9':
+			hasNumber = true
+		case (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z'):
+			hasLetter = true
+		case (char >= '!' && char <= '/') || (char >= ':' && char <= '@') || (char >= '[' && char <= '`') || (char >= '{' && char <= '~'):
+			hasSymbol = true
+		}
+	}
+
+	if !hasNumber || !hasLetter || !hasSymbol {
+		return libraries.CreateCustomError(500, "新密码必须包含数字、字母和符号")
+	}
 
 	// 保存配置
-	err = libraries.SaveUserConfig(username, newPassword)
+	err = libraries.SaveUserConfig(username, newpass)
 	if err != nil {
 		return err
 	}
