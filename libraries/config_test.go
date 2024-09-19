@@ -111,6 +111,85 @@ func TestLoadDatabaseConfig(t *testing.T) {
 	}
 }
 
+func TestGetBind(t *testing.T) {
+	// 创建一个测试配置文件
+	config := Config{
+		Database:        "db.sql",
+		WhitelistConfig: 1,
+		Bind:            "127.0.0.1:8008",
+		User: struct {
+			Username string `yaml:"username"`
+			Password string `yaml:"password"`
+		}{
+			Username: "admin",
+			Password: helper.HashPassword("admin"),
+		},
+	}
+
+	data, err := yaml.Marshal(&config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile("config.yml", data, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 加载绑定配置
+	bind, err := GetBind()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 检查加载的绑定配置
+	if bind != config.Bind {
+		t.Errorf("期望的绑定配置 %s, 得到的 %s", config.Bind, bind)
+	}
+}
+
+func TestSetBind(t *testing.T) {
+	// 创建一个测试配置文件
+	config := Config{
+		Database:        "db.sql",
+		WhitelistConfig: 1,
+		Bind:            "127.0.0.1:8008",
+		User: struct {
+			Username string `yaml:"username"`
+			Password string `yaml:"password"`
+		}{
+			Username: "admin",
+			Password: helper.HashPassword("admin"),
+		},
+	}
+
+	data, err := yaml.Marshal(&config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile("config.yml", data, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 设置新的绑定配置
+	newBind := "192.168.1.1:8080"
+	err = SetBind(newBind)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 加载新的绑定配置
+	updatedBind, err := GetBind()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// 检查加载的新的绑定配置
+	if updatedBind != newBind {
+		t.Errorf("期望的绑定配置 %s, 得到的 %s", newBind, updatedBind)
+	}
+}
+
 func TestLoadUserConfig(t *testing.T) {
 	// 创建一个测试配置文件
 	config := Config{

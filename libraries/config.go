@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Database        string `yaml:"database"`
 	WhitelistConfig int    `yaml:"whitelist_config"` // 0表示不使用，1表示使用白名单，2表示使用黑名单
+	Bind            string `yaml:"bind"`
 	User            struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
@@ -38,6 +39,29 @@ func SaveConfig(config Config) error {
 		return err
 	}
 	err = os.WriteFile("config.yml", data, 0644) // 更新为使用 os.WriteFile
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// 获得bind 值
+func GetBind() (string, error) {
+	config, err := LoadConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.Bind, nil
+}
+
+// 设置 bind 值
+func SetBind(bind string) error {
+	config, err := LoadConfig()
+	if err != nil {
+		return err
+	}
+	config.Bind = bind
+	err = SaveConfig(config)
 	if err != nil {
 		return err
 	}

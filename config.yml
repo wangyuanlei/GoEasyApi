@@ -1,5 +1,6 @@
 database: db.sql
 whitelist_config: 1
+bind: 0.0.0.0:8008
 user:
   username: admin
   password: a05463af472fe7b9b84d5296e571d8c3
