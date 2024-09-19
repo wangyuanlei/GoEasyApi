@@ -16,8 +16,8 @@ func RegisterRoutes(r *gin.Engine) {
 
 	r.POST("/manger_login", controller.MangerLogin) //管理员登录
 
-	r.GET("/get_black_list_type", controller.GetBlackListTypeHandler)  //获取黑名单类型
-	r.POST("/set_black_list_type", controller.SetBlackListTypeHandler) //设置黑名单类型
+	r.GET("/get_black_list_type", controller.CheckAdminLogin, controller.GetBlackListTypeHandler)  //获取黑名单类型
+	r.POST("/set_black_list_type", controller.CheckAdminLogin, controller.SetBlackListTypeHandler) //设置黑名单类型
 
-	r.POST("/set_admin_password", controller.SetSuperAdminPasswordHandler) //设置超级管理员密码
+	r.POST("/set_admin_password", controller.CheckAdminLogin, controller.SetSuperAdminPasswordHandler) //设置超级管理员密码
 }
