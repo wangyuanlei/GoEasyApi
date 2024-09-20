@@ -12,7 +12,7 @@ import (
 var db *gorm.DB
 
 // 数据库初始化
-func InitDB() {
+func InitDB() *gorm.DB {
 	dbPath, err := LoadDatabaseConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -23,6 +23,8 @@ func InitDB() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	return db
 }
 
 // 如果文件不存在, 则创建文件, 并且新建数据库
