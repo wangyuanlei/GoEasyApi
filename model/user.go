@@ -28,7 +28,7 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 		Salt:         salt,
 		DeptId:       deptId,
 		RegisterTime: time.Now(),
-		IsValid:      true,
+		IsValid:      1,
 	}).Error
 }
 
