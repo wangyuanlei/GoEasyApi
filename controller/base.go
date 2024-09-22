@@ -2,6 +2,7 @@ package controller
 
 import (
 	"GoEasyApi/helper"
+	"GoEasyApi/libraries"
 	"GoEasyApi/model"
 
 	"github.com/gin-gonic/gin"
@@ -30,4 +31,14 @@ func CheckAdminLogin(ctx *gin.Context) {
 	}
 
 	ctx.Next()
+}
+
+func ShowModelError(ctx *gin.Context, err error) {
+	if err != nil {
+		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
+			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
+		} else {
+			helper.ApiError(ctx, 601, myErr.Error(), nil)
+		}
+	}
 }

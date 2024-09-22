@@ -17,27 +17,18 @@ type BlackList struct {
 /*
 	表: database
 	字段:
-		database_id 数据库源id
+		database_name 数据库源名称
 		description 数据源描述
-		orm_type	数据库连接类型
-		type 数据库类型 mysql/postgresql/oracle/sqlserver/sqlite
-		host 数据库地址
-		port 数据库端口
-		username 数据库用户名
-		password 数据库密码
-		database_name 数据库名称
+		orm_type	数据库连接类型mysql/postgresql/oracle/sqlserver/sqlite
+		dns 数据库地址
 */
 
 type Database struct {
-	DatabaseCode string `gorm:"type:varchar(32);primary_key"` // 数据库源id
+	DatabaseId   string `gorm:"type:varchar(32);primary_key"` // 数据库源id uuid编号
+	DatabaseName string `gorm:"type:varchar(32)"`             // 数据库源名称
 	Description  string `gorm:"type:text"`                    // 数据源描述
-	OrmType      string `gorm:"type:varchar(20)"`             // 数据库连接类型
-	Type         string `gorm:"type:varchar(20)"`             // 数据库类型 mysql/postgresql/oracle/sqlserver/sqlite
-	Host         string `gorm:"type:varchar(255)"`            // 数据库地址
-	Port         int    `gorm:"type:int"`                     // 数据库端口
-	Username     string `gorm:"type:varchar(50)"`             // 数据库用户名
-	Password     string `gorm:"type:text"`                    // 数据库密码
-	DatabaseName string `gorm:"type:varchar(50)"`             // 数据库名称
+	OrmType      string `gorm:"type:varchar(20)"`             // 数据库连接类型 mysql/postgresql/oracle/sqlserver/sqlite
+	Dns          string `gorm:"type:varchar(255)"`            // 数据库地址
 }
 
 /*
@@ -107,19 +98,23 @@ type Params struct {
 字段:
 
 	user_id 用户id
-	username 用户名
+	name 姓名
+	account 账号
 	password 用户密码
+	dept_id 部门id
 	salt 盐值
-	description 用户描述
-	type 用户类型 1:超级管理员 2:普通用户
+	register_time 注册时间
+	is_valid 是否有效
 */
 type User struct {
-	UserId      string `gorm:"type:varchar(32);primary_key"` // 用户id
-	Username    string `gorm:"type:varchar(50)"`             // 用户名
-	Password    string `gorm:"type:varchar(255)"`            // 用户密码
-	Salt        string `gorm:"type:varchar(255)"`            // 盐值
-	Description string `gorm:"type:text"`                    // 用户描述
-	Type        int    `gorm:"type:int"`                     // 用户类型 1:超级管理员 2:普通用户
+	UserId       string    `gorm:"type:varchar(32);primary_key"` // 用户id
+	Name         string    `gorm:"type:varchar(50)"`             // 姓名
+	Account      string    `gorm:"type:varchar(50)"`             // 账号
+	Password     string    `gorm:"type:varchar(255)"`            // 用户密码
+	DeptId       string    `gorm:"type:varchar(32)"`             // 部门id
+	Salt         string    `gorm:"type:varchar(255)"`            // 盐值
+	RegisterTime time.Time `gorm:"type:datetime"`                // 注册时间
+	IsValid      int       `gorm:"type:int"`                     // 是否有效(1 是 2否)
 }
 
 /*

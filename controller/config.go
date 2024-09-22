@@ -2,7 +2,6 @@ package controller
 
 import (
 	"GoEasyApi/helper"
-	"GoEasyApi/libraries"
 	"GoEasyApi/model"
 	"strconv"
 
@@ -32,11 +31,8 @@ func SetBlackListTypeHandler(ctx *gin.Context) {
 
 	_err := config.SetBlackListType(blackListType)
 	if _err != nil {
-		if myErr, ok := _err.(*libraries.CustomErrorNew); ok {
-			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
-		} else {
-			helper.ApiError(ctx, 601, myErr.Error(), nil)
-		}
+		ShowModelError(ctx, _err)
+		return
 	}
 
 	helper.ApiSuccess(ctx, true)
@@ -57,11 +53,7 @@ func SetSuperAdminPasswordHandler(ctx *gin.Context) {
 	config := model.Config{}
 	err := config.SetSuperAdminPassword(passwordData.OldPassword, passwordData.NewPassword)
 	if err != nil {
-		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
-			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
-		} else {
-			helper.ApiError(ctx, 601, myErr.Error(), nil)
-		}
+		ShowModelError(ctx, err)
 		return
 	}
 

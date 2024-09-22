@@ -55,7 +55,7 @@ func (a *Admin) Login(username, password string) (string, error) {
 	}
 
 	pass := helper.HashPassword(password)
-
+	// fmt.Print("pass: ", pass)
 	// 对比 username 和 password
 	if username != configUsername || pass != configPassword {
 		return "", libraries.CreateCustomError(500, "账号或者密码错误")
