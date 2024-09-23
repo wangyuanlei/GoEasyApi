@@ -38,7 +38,7 @@ func ShowModelError(ctx *gin.Context, err error) {
 		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
 			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
 		} else {
-			helper.ApiError(ctx, 601, myErr.Error(), nil)
+			helper.ApiError(ctx, 601, err.Error(), nil)
 		}
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type User struct{}
@@ -16,12 +18,19 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 		return libraries.CreateCustomError(601, "账号已存在")
 	}
 
+	userId := uuid.New().String()
+	var existingUser2 database.User
+	if err := DB.Where("user_id = ?", userId).First(&existingUser2).Error; err == nil {
+		return libraries.CreateCustomError(601, "用户ID已存在")
+	}
+
 	//生成随机Salt
 	salt := helper.GenerateRandomString(6)
 	// 生成密码
 	hashedPassword := helper.DoubleHashPassword(password, salt)
 
 	return DB.Create(&database.User{
+		UserId:       userId,
 		Name:         name,
 		Account:      account,
 		Password:     hashedPassword,
@@ -32,8 +41,8 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 	}).Error
 }
 
-// UpdateUserInfo 更新用户信息
-func (u *User) UpdateUserInfo(userId string, name string, deptId string) error {
+// ChangeInfo 更新用户信息
+func (u *User) ChangeInfo(userId string, name string, deptId string) error {
 	var user database.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return libraries.CreateCustomError(602, "用户信息不存在")
@@ -45,7 +54,7 @@ func (u *User) UpdateUserInfo(userId string, name string, deptId string) error {
 }
 
 // UpdateUserPassword 更新用户密码
-func (u *User) UpdateUserPassword(userId string, oldPassword string, newPassword string) error {
+func (u *User) ChangePassword(userId string, oldPassword string, newPassword string) error {
 	var user database.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return libraries.CreateCustomError(602, "用户信息不存在")
@@ -70,6 +79,10 @@ func (u *User) GetCurrentUserInfo(userId string) (database.User, error) {
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return database.User{}, err
 	}
+
+	//密码和加密salt 信息 不能输出到前台
+	user.Password = ""
+	user.Salt = ""
 	return user, nil
 }
 
@@ -90,5 +103,12 @@ func (u *User) GetUserList(page int, pageSize int, deptId string, name string, i
 	if err := query.Find(&users).Offset((page - 1) * pageSize).Limit(pageSize).Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
+
+	//密码和加密salt 信息 不能输出到前台
+	for i := range users {
+		users[i].Password = ""
+		users[i].Salt = ""
+	}
+
 	return users, total, nil
 }
