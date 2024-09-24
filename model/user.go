@@ -68,6 +68,17 @@ func (u *User) ChangePassword(userId string, oldPassword string, newPassword str
 	return DB.Model(&user).Update("password", hashedNewPassword).Error
 }
 
+// UpdateUserPassword 更新用户密码
+func (u *User) AdminChangePassword(userId string, password string) error {
+	var user database.User
+	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
+		return libraries.CreateCustomError(602, "用户信息不存在")
+	}
+
+	hashedNewPassword := helper.DoubleHashPassword(password, user.Salt)
+	return DB.Model(&user).Update("password", hashedNewPassword).Error
+}
+
 // SetUserValidity 设置用户有效性
 func (u *User) SetUserValidity(userId string, isValid bool) error {
 	return DB.Model(&User{}).Where("user_id = ?", userId).Update("is_valid", isValid).Error

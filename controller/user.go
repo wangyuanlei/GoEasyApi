@@ -37,10 +37,9 @@ func Register(ctx *gin.Context) {
 // 修改用户信息
 func ChangeUserInfo(ctx *gin.Context) {
 	var params struct {
-		UserId  string `json:"user_id"`
-		Name    string `json:"name"`
-		Account string `json:"account"`
-		DeptId  string `json:"dept_id"`
+		UserId string `json:"user_id"`
+		Name   string `json:"name"`
+		DeptId string `json:"dept_id"`
 	}
 
 	if err := ctx.ShouldBindJSON(&params); err != nil {
@@ -70,7 +69,33 @@ func ChangeUserPassword(ctx *gin.Context) {
 		return
 	}
 
+	if params.OldPassword == params.NewPassword {
+		helper.ApiError(ctx, 602, "新密码不能和旧密码一样", nil)
+		return
+	}
+
 	err := UserModel.ChangePassword(params.UserId, params.OldPassword, params.NewPassword)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, true)
+}
+
+// 管理员设置用户密码
+func AdminChangeUserPassord(ctx *gin.Context) {
+	var params struct {
+		UserId   string `json:"user_id"`
+		Password string `json:"password"`
+	}
+
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
+		return
+	}
+
+	err := UserModel.AdminChangePassword(params.UserId, params.Password)
 	if err != nil {
 		ShowModelError(ctx, err)
 		return

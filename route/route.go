@@ -15,9 +15,12 @@ func RegisterRoutes(r *gin.Engine) {
 	r.POST("/api/*path", controller.PostApi)      //
 	r.POST("/user/register", controller.Register) // 用户注册
 	//管理员操作
-	r.POST("/manger/login", controller.MangerLogin)                                                   //管理员登录
-	r.GET("/manger/get_user_info", controller.CheckAdminLogin, controller.GetUserInfo)                //获得用户信息详情
-	r.GET("/manger/get_user_list", controller.CheckAdminLogin, controller.GetUserList)                //获得用户信息列表
+	r.POST("/manger/login", controller.MangerLogin)                                                //管理员登录
+	r.GET("/manger/get_user_info", controller.CheckAdminLogin, controller.GetUserInfo)             //获得用户信息详情
+	r.GET("/manger/get_user_list", controller.CheckAdminLogin, controller.GetUserList)             //获得用户信息列表
+	r.POST("/manger/set_user_pass", controller.CheckAdminLogin, controller.AdminChangeUserPassord) //管理员设置用户密码
+	r.POST("/manger/set_user_info", controller.CheckAdminLogin, controller.ChangeUserInfo)         //管理员设置用户信息
+
 	r.POST("/manger/reset_pass", controller.CheckAdminLogin, controller.SetSuperAdminPasswordHandler) //设置超级管理员密码
 	//名单类型配置
 	r.GET("/manger/list/get_type", controller.CheckAdminLogin, controller.GetBlackListTypeHandler)  //获取黑名单类型
