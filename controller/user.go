@@ -50,6 +50,12 @@ func UserLogin(ctx *gin.Context) {
 		ShowModelError(ctx, err)
 		return
 	}
+
+	if user.IsValid != 1 {
+		helper.ApiError(ctx, 602, "用户信息无效", nil)
+		return
+	}
+
 	token, err := TokenModel.CreateToken(user.UserId)
 	if err != nil {
 		ShowModelError(ctx, err)
@@ -57,9 +63,26 @@ func UserLogin(ctx *gin.Context) {
 	}
 
 	helper.ApiSuccess(ctx, map[string]interface{}{
-		"token": token,
-		"user":  user,
+		"Token": token,
+		"User":  user,
 	})
+}
+
+// 用户获得当前账号信息
+func GetUserInfoByMe(ctx *gin.Context) {
+	userIdStr, ok := ctx.Get("USERID")
+	if !ok {
+		helper.ApiSuccess(ctx, nil)
+		return
+	}
+	userId := userIdStr.(string)
+	info, err := UserModel.GetCurrentUserInfo(userId)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, info)
 }
 
 // 修改用户信息

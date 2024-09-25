@@ -35,9 +35,9 @@ func CheckAdminLogin(ctx *gin.Context) {
 
 // 检查用户是否登录
 func CheckUserLogin(ctx *gin.Context) {
-	token := ctx.GetHeader("token")
+	token := ctx.GetHeader("usertoken")
 	if token == "" {
-		helper.ApiError(ctx, 502, "Token 未提交", nil)
+		helper.ApiError(ctx, 502, "用户 Token 未提交", nil)
 		ctx.Abort()
 		return
 	}
@@ -45,10 +45,13 @@ func CheckUserLogin(ctx *gin.Context) {
 	tokenModel := model.Token{}
 	userId, err := tokenModel.GetTokenInfo(token)
 	if err != nil {
-		helper.ApiError(ctx, 501, "token验证失败", nil)
+		ShowModelError(ctx, err)
 		ctx.Abort()
 		return
 	}
+
+	//token 有效时间延续2小时
+	tokenModel.TokenExtendTime(userId, token)
 
 	ctx.Set("USERID", userId)
 	ctx.Next()
