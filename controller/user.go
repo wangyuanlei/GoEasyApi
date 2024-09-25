@@ -10,9 +10,10 @@ import (
 )
 
 var UserModel = model.User{}
+var TokenModel = model.Token{}
 
 // 用户信息注册
-func Register(ctx *gin.Context) {
+func UserRegister(ctx *gin.Context) {
 	var params struct {
 		Name     string `json:"name"`
 		Account  string `json:"account"`
@@ -32,6 +33,33 @@ func Register(ctx *gin.Context) {
 	}
 
 	helper.ApiSuccess(ctx, true)
+}
+
+// 用户登录
+func UserLogin(ctx *gin.Context) {
+	var params struct {
+		Account  string `json:"account"`
+		Password string `json:"password"`
+	}
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
+		return
+	}
+	user, err := UserModel.Login(params.Account, params.Password)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+	token, err := TokenModel.CreateToken(user.UserId)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, map[string]interface{}{
+		"token": token,
+		"user":  user,
+	})
 }
 
 // 修改用户信息

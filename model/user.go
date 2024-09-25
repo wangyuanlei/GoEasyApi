@@ -41,6 +41,24 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 	}).Error
 }
 
+// 用户登录
+func (u *User) Login(account string, password string) (*database.User, error) {
+	var user database.User
+	if err := DB.Where("account = ?", account).First(&user).Error; err != nil {
+		return nil, libraries.CreateCustomError(602, "用户不存在")
+	}
+
+	if helper.DoubleHashPassword(password, user.Salt) != user.Password {
+		return nil, libraries.CreateCustomError(602, "密码错误")
+	}
+
+	//密码和加密salt 信息 不能输出到前台
+	user.Password = ""
+	user.Salt = ""
+
+	return &user, nil
+}
+
 // ChangeInfo 更新用户信息
 func (u *User) ChangeInfo(userId string, name string, deptId string) error {
 	var user database.User

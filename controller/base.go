@@ -33,6 +33,27 @@ func CheckAdminLogin(ctx *gin.Context) {
 	ctx.Next()
 }
 
+// 检查用户是否登录
+func CheckUserLogin(ctx *gin.Context) {
+	token := ctx.GetHeader("token")
+	if token == "" {
+		helper.ApiError(ctx, 502, "Token 未提交", nil)
+		ctx.Abort()
+		return
+	}
+	// userModel := model.User{}
+	tokenModel := model.Token{}
+	userId, err := tokenModel.GetTokenInfo(token)
+	if err != nil {
+		helper.ApiError(ctx, 501, "token验证失败", nil)
+		ctx.Abort()
+		return
+	}
+
+	ctx.Set("USERID", userId)
+	ctx.Next()
+}
+
 func ShowModelError(ctx *gin.Context, err error) {
 	if err != nil {
 		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
