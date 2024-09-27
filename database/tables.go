@@ -71,13 +71,13 @@ type Interface struct {
 	DatabaseId             string `gorm:"type:varchar(32)"`             // 数据库源id
 	Path                   string `gorm:"type:varchar(255)"`            // 接口路径
 	Method                 string `gorm:"type:varchar(10)"`             // 接口方法
-	CacheEnabled           int    `gorm:"type:bool"`                    // 是否启用接口缓存
+	CacheEnabled           int    `gorm:"type:int"`                     // 是否启用接口缓存
 	CacheTime              int    `gorm:"type:int"`                     // 接口缓存时间
-	RateLimitEnabled       int    `gorm:"type:bool"`                    // 是否启用接口限流
+	RateLimitEnabled       int    `gorm:"type:int"`                     // 是否启用接口限流
 	RateLimitCount         int    `gorm:"type:int"`                     // 接口限流次数
 	RateLimitTime          int    `gorm:"type:int"`                     // 接口限流时间
 	SqlContent             string `gorm:"type:text"`                    // 接口sql语句
-	TokenValidationEnabled int    `gorm:"type:bool"`                    // 是否启用token验证
+	TokenValidationEnabled int    `gorm:"type:int"`                     // 是否启用token验证
 	ReturnType             string `gorm:"type:varchar(50)"`             // 接口返回类型
 	Params                 []Params
 }
@@ -86,9 +86,9 @@ type Params struct {
 	ParamsId    string `gorm:"type:varchar(32);primary_key"` // 接口编号
 	InterfaceId string `gorm:"type:varchar(32)"`             // 接口编号
 	Name        string `gorm:"type:varchar(50)"`             // 参数名称
-	Type        string `gorm:"type:varchar(20)"`             // 参数类型 比如 string/int/float/bool/datetime
+	Type        string `gorm:"type:varchar(20)"`             // 参数类型 比如 string/int/float/bool/date/datetime
 	Description string `gorm:"type:text"`                    // 参数描述
-	Required    int    `gorm:"type:bool"`                    // 是否必传
+	Required    int    `gorm:"type:int"`                     // 是否必传
 	Default     string `gorm:"type:text"`                    // 默认值
 	Example     string `gorm:"type:text"`                    // 示例值
 	Regex       string `gorm:"type:text"`                    // 正则表达式
