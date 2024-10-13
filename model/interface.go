@@ -3,6 +3,7 @@ package model
 import (
 	"GoEasyApi/cron"
 	"GoEasyApi/database"
+	"GoEasyApi/helper"
 	"regexp"
 
 	"github.com/google/uuid"
@@ -26,6 +27,10 @@ func (m *Interface) AddInterface(info database.Interface) (string, error) {
 
 	if err := m.CheckEnabled(info.TokenValidationEnabled); err != nil {
 		return "", cron.CreateCustomError(601, "是否设置验证token的值设置错误, 1是 2否")
+	}
+
+	if err := helper.CheckParamItem(info.ReturnType, "string|json|list|page"); err != nil {
+		return "", err
 	}
 
 	var existingInterface database.Interface
@@ -128,7 +133,7 @@ func (m *Interface) UpdateParams(interfaceId string, paramsId string, params dat
 		return err
 	}
 
-	if err := m.CheckParamType(params.Type); err != nil {
+	if err := helper.CheckParamItem(params.Type, "string|int|float|bool|date|datetime"); err != nil {
 		return err
 	}
 

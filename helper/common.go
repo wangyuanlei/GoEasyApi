@@ -91,7 +91,7 @@ func InArray(arr []string, str string) bool {
 }
 
 func CheckParamItem(item string, itemList string) error {
-	regText := "`^(" + itemList + ")$`"
+	regText := "^(" + itemList + ")$"
 	if !regexp.MustCompile(regText).MatchString(item) {
 
 		return cron.CreateCustomError(601, "参数类型错误:"+item+"不是有效的值, 只能是以下类型"+itemList)

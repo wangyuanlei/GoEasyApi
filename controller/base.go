@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/helper"
-	"GoEasyApi/libraries"
 	"GoEasyApi/model"
 
 	"github.com/gin-gonic/gin"
@@ -59,7 +59,7 @@ func CheckUserLogin(ctx *gin.Context) {
 
 func ShowModelError(ctx *gin.Context, err error) {
 	if err != nil {
-		if myErr, ok := err.(*libraries.CustomErrorNew); ok {
+		if myErr, ok := err.(*cron.CustomErrorNew); ok {
 			helper.ApiError(ctx, myErr.Code, myErr.Message, nil)
 		} else {
 			helper.ApiError(ctx, 601, err.Error(), nil)
