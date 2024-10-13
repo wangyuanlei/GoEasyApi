@@ -39,4 +39,6 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/manger/db/get_conf", controller.CheckAdminLogin, controller.GetUserDBConf)   //获得数据库配置
 	r.POST("/manger/db/set_conf", controller.CheckAdminLogin, controller.SaveUserDBConf) //保存数据库配置
 
+	//接口操作
+	r.POST("/manger/interface/add", controller.CheckAdminLogin, controller.AddInterface) //添加接口
 }

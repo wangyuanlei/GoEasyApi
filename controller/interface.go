@@ -13,7 +13,6 @@ var InterfaceModel = model.Interface{}
 type CreateInterface struct {
 	InterfaceName          string `gorm:"type:varchar(50)"`  // 接口名称
 	Description            string `gorm:"type:text"`         // 接口描述
-	DatabaseId             string `gorm:"type:varchar(32)"`  // 数据库源id
 	Path                   string `gorm:"type:varchar(255)"` // 接口路径
 	Method                 string `gorm:"type:varchar(10)"`  // 接口方法
 	CacheEnabled           int    `gorm:"type:int"`          // 是否启用接口缓存
@@ -33,6 +32,7 @@ func AddInterface(ctx *gin.Context) {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
 		return
 	}
+
 	InterfaceId, err := InterfaceModel.AddInterface(database.Interface{
 		InterfaceName:          params.InterfaceName,
 		Description:            params.Description,
