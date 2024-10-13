@@ -26,6 +26,7 @@ libraries/config.go 配置读取类
 			2. 如果验证成功. 有效期改为当前时间 + 2小时
 */
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
 	"time"
@@ -51,14 +52,14 @@ func (a *Admin) Login(username, password string) (string, error) {
 	// 从配置获得 username 和 password
 	configUsername, configPassword, err := libraries.LoadUserConfig()
 	if err != nil {
-		return "", libraries.CreateCustomError(601, "配置错误") // 更新为直接从 libraries 调用 NewCustomError
+		return "", cron.CreateCustomError(601, "配置错误") // 更新为直接从 libraries 调用 NewCustomError
 	}
 
 	pass := helper.HashPassword(password)
 	// fmt.Print("pass: ", pass)
 	// 对比 username 和 password
 	if username != configUsername || pass != configPassword {
-		return "", libraries.CreateCustomError(500, "账号或者密码错误")
+		return "", cron.CreateCustomError(500, "账号或者密码错误")
 	}
 
 	// 生成 uuid 作为 token
@@ -86,13 +87,13 @@ func (a *Admin) ValidateLogin(token string) (string, error) {
 	// 验证 token 是否在 cache 缓存中存在
 	_userName, IsExists := libraries.GetCache(token)
 	if !IsExists {
-		return "", libraries.CreateCustomError(601, "验证失败，token 不存在")
+		return "", cron.CreateCustomError(601, "验证失败，token 不存在")
 	}
 
 	// 类型断言将 _userName 转换为 string
 	username, ok := _userName.(string)
 	if !ok {
-		return "", libraries.CreateCustomError(500, "用户名类型错误")
+		return "", cron.CreateCustomError(500, "用户名类型错误")
 	}
 
 	// 如果验证成功，有效期改为当前时间 + 2小时

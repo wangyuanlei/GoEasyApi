@@ -1,6 +1,7 @@
 package model
 
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/libraries"
 	"time"
@@ -57,7 +58,7 @@ func (t *Token) GetTokenInfo(token string) (string, error) {
 	}
 
 	if dbToken.ValidTime.Before(time.Now()) {
-		return "", libraries.CreateCustomError(601, "token 已经过期")
+		return "", cron.CreateCustomError(601, "token 已经过期")
 	}
 
 	return dbToken.UserId, nil

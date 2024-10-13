@@ -1,9 +1,9 @@
 package model
 
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
-	"GoEasyApi/libraries"
 
 	"github.com/google/uuid"
 )
@@ -22,7 +22,7 @@ func (a *DataBase) UpdateUserDBConf(name string, description string, orm_type st
 
 	supportedOrmTypes := []string{"mysql", "postgresql", "oracle", "sqlserver", "sqlite"}
 	if !helper.InArray(supportedOrmTypes, orm_type) {
-		return libraries.CreateCustomError(601, "类型不支持")
+		return cron.CreateCustomError(601, "类型不支持")
 	}
 
 	dbconf, _ := a.GetUserDBConf()

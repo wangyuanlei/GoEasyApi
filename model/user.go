@@ -1,9 +1,9 @@
 package model
 
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
-	"GoEasyApi/libraries"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,13 +15,13 @@ type User struct{}
 func (u *User) RegisterUser(name string, account string, password string, deptId string) error {
 	var existingUser database.User
 	if err := DB.Where("account = ?", account).First(&existingUser).Error; err == nil {
-		return libraries.CreateCustomError(601, "账号已存在")
+		return cron.CreateCustomError(601, "账号已存在")
 	}
 
 	userId := uuid.New().String()
 	var existingUser2 database.User
 	if err := DB.Where("user_id = ?", userId).First(&existingUser2).Error; err == nil {
-		return libraries.CreateCustomError(601, "用户ID已存在")
+		return cron.CreateCustomError(601, "用户ID已存在")
 	}
 
 	//生成随机Salt
@@ -45,11 +45,11 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 func (u *User) Login(account string, password string) (*database.User, error) {
 	var user database.User
 	if err := DB.Where("account = ?", account).First(&user).Error; err != nil {
-		return nil, libraries.CreateCustomError(602, "用户不存在")
+		return nil, cron.CreateCustomError(602, "用户不存在")
 	}
 
 	if helper.DoubleHashPassword(password, user.Salt) != user.Password {
-		return nil, libraries.CreateCustomError(602, "密码错误")
+		return nil, cron.CreateCustomError(602, "密码错误")
 	}
 
 	//密码和加密salt 信息 不能输出到前台
@@ -63,7 +63,7 @@ func (u *User) Login(account string, password string) (*database.User, error) {
 func (u *User) ChangeInfo(userId string, name string, deptId string) error {
 	var user database.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
-		return libraries.CreateCustomError(602, "用户信息不存在")
+		return cron.CreateCustomError(602, "用户信息不存在")
 	}
 	return DB.Model(&user).Updates(database.User{
 		Name:   name,
@@ -75,11 +75,11 @@ func (u *User) ChangeInfo(userId string, name string, deptId string) error {
 func (u *User) ChangePassword(userId string, oldPassword string, newPassword string) error {
 	var user database.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
-		return libraries.CreateCustomError(602, "用户信息不存在")
+		return cron.CreateCustomError(602, "用户信息不存在")
 	}
 
 	if helper.DoubleHashPassword(oldPassword, user.Salt) != user.Password {
-		return libraries.CreateCustomError(602, "旧密码不正确")
+		return cron.CreateCustomError(602, "旧密码不正确")
 	}
 
 	hashedNewPassword := helper.DoubleHashPassword(newPassword, user.Salt)
@@ -90,7 +90,7 @@ func (u *User) ChangePassword(userId string, oldPassword string, newPassword str
 func (u *User) AdminChangePassword(userId string, password string) error {
 	var user database.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
-		return libraries.CreateCustomError(602, "用户信息不存在")
+		return cron.CreateCustomError(602, "用户信息不存在")
 	}
 
 	hashedNewPassword := helper.DoubleHashPassword(password, user.Salt)

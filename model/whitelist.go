@@ -1,9 +1,9 @@
 package model
 
 import (
+	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
-	"GoEasyApi/libraries"
 )
 
 type WhiteList struct{}
@@ -19,7 +19,7 @@ func (m *WhiteList) GetAllWhiteList() ([]database.WhiteList, error) {
 func (m *WhiteList) AddWhiteList(ip string, description string) error {
 	//判断ip
 	if !helper.IsValidIP(ip) {
-		return libraries.CreateCustomError(601, "ip 不合法")
+		return cron.CreateCustomError(601, "ip 不合法")
 	}
 	//判断ip 是否存在, 如果不存在 ,则创建, 存在则更新 Description 值
 	var existingData database.WhiteList
@@ -48,7 +48,7 @@ func (m *WhiteList) GetAllBlackList() ([]database.BlackList, error) {
 func (m *WhiteList) AddBlackList(ip string, description string) error {
 	//判断ip
 	if !helper.IsValidIP(ip) {
-		return libraries.CreateCustomError(601, "ip 不合法")
+		return cron.CreateCustomError(601, "ip 不合法")
 	}
 	//判断ip 是否存在, 如果不存在 ,则创建, 存在则更新 Description 值
 	var existingData database.BlackList
