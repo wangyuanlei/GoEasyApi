@@ -4,32 +4,40 @@ import (
 	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
-	"regexp"
 
 	"github.com/google/uuid"
 )
 
 type Interface struct{}
 
-// 增加接口
-func (m *Interface) AddInterface(info database.Interface) (string, error) {
-	if err := m.CheckMethod(info.Method); err != nil {
-		return "", err
+func (m *Interface) InterfaceVerify(info database.Interface) error {
+	if err := helper.CheckMethod(info.Method); err != nil {
+		return err
 	}
 
-	if err := m.CheckEnabled(info.CacheEnabled); err != nil {
-		return "", cron.CreateCustomError(601, "CacheEnabled 值错误, 1是 2否")
+	if err := helper.CheckEnabled(info.CacheEnabled); err != nil {
+		return cron.CreateCustomError(601, "CacheEnabled 值错误, 1是 2否")
 	}
 
-	if err := m.CheckEnabled(info.RateLimitEnabled); err != nil {
-		return "", cron.CreateCustomError(601, "RateLimitEnabled 值错误, 1是 2否")
+	if err := helper.CheckEnabled(info.RateLimitEnabled); err != nil {
+		return cron.CreateCustomError(601, "RateLimitEnabled 值错误, 1是 2否")
 	}
 
-	if err := m.CheckEnabled(info.TokenValidationEnabled); err != nil {
-		return "", cron.CreateCustomError(601, "是否设置验证token的值设置错误, 1是 2否")
+	if err := helper.CheckEnabled(info.TokenValidationEnabled); err != nil {
+		return cron.CreateCustomError(601, "是否设置验证token的值设置错误, 1是 2否")
 	}
 
 	if err := helper.CheckParamItem(info.ReturnType, "string|json|list|page"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 增加接口
+func (m *Interface) AddInterface(info database.Interface) (string, error) {
+
+	if err := m.InterfaceVerify(info); err != nil {
 		return "", err
 	}
 
@@ -41,8 +49,15 @@ func (m *Interface) AddInterface(info database.Interface) (string, error) {
 
 	info.InterfaceId = uuid.New().String()
 
-	err := DB.Create(&info).Error
-	return info.InterfaceId, err
+	if err := DB.Create(&info).Error; err != nil {
+		return "", err
+	}
+
+	if len(info.Params) > 0 { //如果参数不为空. 保存数据
+		m.SaveParams(info.InterfaceId, info.Params)
+	}
+
+	return info.InterfaceId, nil
 }
 
 // 修改修改
@@ -51,25 +66,13 @@ func (m *Interface) UpdateInterface(info database.Interface) error {
 		return cron.CreateCustomError(601, "InterfaceId 不能为空")
 	}
 
-	var existingInterface database.Interface
-	if err := DB.Where("interface_id = ?", info.InterfaceId).First(&existingInterface).Error; err != nil {
-		return cron.CreateCustomError(601, "数据不存在")
-	}
-
-	if err := m.CheckMethod(info.Method); err != nil {
+	if err := m.InterfaceVerify(info); err != nil {
 		return err
 	}
 
-	if err := m.CheckEnabled(info.CacheEnabled); err != nil {
-		return cron.CreateCustomError(601, "CacheEnabled 值错误, 1是 2否")
-	}
-
-	if err := m.CheckEnabled(info.RateLimitEnabled); err != nil {
-		return cron.CreateCustomError(601, "RateLimitEnabled 值错误, 1是 2否")
-	}
-
-	if err := m.CheckEnabled(info.TokenValidationEnabled); err != nil {
-		return cron.CreateCustomError(601, "是否设置验证token的值设置错误, 1是 2否")
+	var existingInterface database.Interface
+	if err := DB.Where("interface_id = ?", info.InterfaceId).First(&existingInterface).Error; err != nil {
+		return cron.CreateCustomError(601, "数据不存在")
 	}
 
 	var existingInterface2 database.Interface
@@ -77,8 +80,20 @@ func (m *Interface) UpdateInterface(info database.Interface) error {
 		return cron.CreateCustomError(601, "接口["+info.Method+"]"+info.Path+" 已存在")
 	}
 
-	err := DB.Model(&database.Interface{}).Updates(info).Error
-	return err
+	if err := DB.Model(&database.Interface{}).Updates(info).Error; err != nil {
+		return err
+	}
+
+	if len(info.Params) > 0 {
+		m.SaveParams(info.InterfaceId, info.Params)
+	} else {
+		//如果空 则情况一次参数表
+		if err := DB.Where("interface_id = ?", info.InterfaceId).Delete(&database.Params{}).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // 删除接口
@@ -93,71 +108,6 @@ func (m *Interface) DeleteInterface(interfaceId string) error {
 	}
 
 	if err := DB.Where("interface_id = ?", interfaceId).Delete(&database.Params{}).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// 添加接口参数
-func (m *Interface) AddParams(interfaceId string, params database.Params) error {
-	if err := m.CheckStringFormat(params.Name); err != nil {
-		return err
-	}
-
-	if err := m.CheckParamType(params.Type); err != nil {
-		return err
-	}
-
-	if err := m.CheckEnabled(params.Required); err != nil {
-		return cron.CreateCustomError(601, "是否必传参数错误")
-	}
-
-	params.InterfaceId = interfaceId
-	params.ParamsId = uuid.New().String()
-	if err := DB.Create(&params).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// 修改参数
-func (m *Interface) UpdateParams(interfaceId string, paramsId string, params database.Params) error {
-	var existingParam database.Params
-	if err := DB.Where("interface_id = ? AND params_id = ?", interfaceId, paramsId).First(&existingParam).Error; err != nil {
-		return cron.CreateCustomError(601, "参数不存在")
-	}
-
-	if err := m.CheckStringFormat(params.Name); err != nil {
-		return err
-	}
-
-	if err := helper.CheckParamItem(params.Type, "string|int|float|bool|date|datetime"); err != nil {
-		return err
-	}
-
-	if err := m.CheckEnabled(params.Required); err != nil {
-		return cron.CreateCustomError(601, "是否必传参数错误")
-	}
-
-	params.InterfaceId = interfaceId
-	params.ParamsId = existingParam.ParamsId
-	if err := DB.Model(&existingParam).Updates(params).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// 删除参数
-func (m *Interface) DeleteParams(interfaceId string, paramsId string) error {
-	var existingParam database.Params
-	if err := DB.Where("interface_id = ? AND params_id = ?", interfaceId, paramsId).First(&existingParam).Error; err != nil {
-		return cron.CreateCustomError(601, "参数不存在")
-	}
-
-	if err := DB.Delete(&existingParam).Error; err != nil {
 		return err
 	}
 
@@ -208,39 +158,4 @@ func (m *Interface) GetInfo(InterfaceId string) (database.Interface, error) {
 
 	interfaceInfo.Params = params
 	return interfaceInfo, nil
-}
-
-// 检查method 类型 只能是 post 和 get
-func (m *Interface) CheckMethod(method string) error {
-	if method != "post" && method != "get" {
-		return cron.CreateCustomError(601, "Method 只能是 get 或者 post")
-	}
-
-	return nil
-}
-
-// 检查是否有效的值
-func (m *Interface) CheckEnabled(data int) error {
-
-	if data != 1 && data != 2 {
-		return cron.CreateCustomError(601, "值设置错误")
-	}
-
-	return nil
-}
-
-// 检查参数的名称
-func (m *Interface) CheckStringFormat(str string) error {
-	if !regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString(str) {
-		return cron.CreateCustomError(601, "字符串只能包含大小写字母、数字和下划线")
-	}
-	return nil
-}
-
-// 检查参数的类型定义是否准确
-func (m *Interface) CheckParamType(paramType string) error {
-	if !regexp.MustCompile(`^(string|int|float|bool|date|datetime)$`).MatchString(paramType) {
-		return cron.CreateCustomError(601, "参数类型错误")
-	}
-	return nil
 }

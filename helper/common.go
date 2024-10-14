@@ -99,3 +99,29 @@ func CheckParamItem(item string, itemList string) error {
 
 	return nil
 }
+
+// 检查method 类型 只能是 post 和 get
+func CheckMethod(method string) error {
+	if method != "post" && method != "get" {
+		return cron.CreateCustomError(601, "Method 只能是 get 或者 post")
+	}
+
+	return nil
+}
+
+// 检查是否有效的值
+func CheckEnabled(data int) error {
+	if data != 1 && data != 2 {
+		return cron.CreateCustomError(601, "值设置错误")
+	}
+
+	return nil
+}
+
+// 检查参数的名称
+func CheckStringFormat(str string) error {
+	if !regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString(str) {
+		return cron.CreateCustomError(601, "字符串只能包含大小写字母、数字和下划线")
+	}
+	return nil
+}
