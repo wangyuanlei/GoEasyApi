@@ -27,31 +27,36 @@ type CreateInterface struct {
 
 // 增加接口
 func AddInterface(ctx *gin.Context) {
-	var params CreateInterface
+	var params database.Interface
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
 		return
 	}
 
-	InterfaceId, err := InterfaceModel.AddInterface(database.Interface{
-		InterfaceName:          params.InterfaceName,
-		Description:            params.Description,
-		DatabaseId:             "none",
-		Path:                   params.Path,
-		Method:                 params.Method,
-		CacheEnabled:           params.CacheEnabled,
-		CacheTime:              params.CacheTime,
-		RateLimitEnabled:       params.RateLimitEnabled,
-		RateLimitCount:         params.RateLimitCount,
-		RateLimitTime:          params.RateLimitTime,
-		SqlContent:             params.SqlContent,
-		TokenValidationEnabled: params.TokenValidationEnabled,
-		ReturnType:             params.ReturnType,
-	})
+	params.DatabaseId = "none"
+	InterfaceId, err := InterfaceModel.AddInterface(params)
 	if err != nil {
 		ShowModelError(ctx, err)
 		return
 	}
 
 	helper.ApiSuccess(ctx, InterfaceId)
+}
+
+// 增加接口
+func UpdateInterface(ctx *gin.Context) {
+	var params database.Interface
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
+		return
+	}
+
+	params.DatabaseId = "none"
+	err := InterfaceModel.UpdateInterface(params)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, params.InterfaceId)
 }

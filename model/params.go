@@ -8,8 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-// 添加接口参数(单个)
-func (m *Interface) AddParams(interfaceId string, params database.Params) error {
+// 参数检验
+func (m *Interface) ParamsVerify(params database.Params) error {
+	if err := m.CheckParamRequired(params); err != nil {
+		return err
+	}
+
 	if err := helper.CheckStringFormat(params.Name); err != nil {
 		return err
 	}
@@ -19,7 +23,37 @@ func (m *Interface) AddParams(interfaceId string, params database.Params) error 
 	}
 
 	if err := helper.CheckEnabled(params.Required); err != nil {
-		return cron.CreateCustomError(601, "是否必传参数错误")
+		return cron.CreateCustomError(601, "传入的值无效")
+	}
+	return nil
+}
+
+// 检查参数是否必传
+func (m *Interface) CheckParamRequired(params database.Params) error {
+	if params.Name == "" {
+		return cron.CreateCustomError(601, "name 必传参数未提交")
+	}
+	if params.Type == "" {
+		return cron.CreateCustomError(601, "type 必传参数未提交")
+	}
+
+	return nil
+}
+
+// 检查参数数据是否存在, 存在则返回存在的数据
+func (m *Interface) ParamsExist(interfaceId string, paramsId string) (database.Params, error) {
+	var existingParam database.Params
+	if err := DB.Where("interface_id = ? AND params_id = ?", interfaceId, paramsId).First(&existingParam).Error; err != nil {
+		return existingParam, cron.CreateCustomError(601, "接口参数不存在")
+	}
+
+	return existingParam, nil
+}
+
+// 添加接口参数(单个)
+func (m *Interface) AddParams(interfaceId string, params database.Params) error {
+	if err := m.ParamsVerify(params); err != nil {
+		return err
 	}
 
 	params.InterfaceId = interfaceId
@@ -33,24 +67,16 @@ func (m *Interface) AddParams(interfaceId string, params database.Params) error 
 
 // 修改参数 (单个)
 func (m *Interface) UpdateParams(interfaceId string, paramsId string, params database.Params) error {
-	var existingParam database.Params
-	if err := DB.Where("interface_id = ? AND params_id = ?", interfaceId, paramsId).First(&existingParam).Error; err != nil {
-		return cron.CreateCustomError(601, "参数不存在")
-	}
-
-	if err := helper.CheckStringFormat(params.Name); err != nil {
+	if err := m.ParamsVerify(params); err != nil {
 		return err
 	}
 
-	if err := helper.CheckParamItem(params.Type, "string|int|float|bool|date|datetime"); err != nil {
+	existingParam, err := m.ParamsExist(interfaceId, paramsId)
+	if err != nil {
 		return err
 	}
 
-	if err := helper.CheckEnabled(params.Required); err != nil {
-		return cron.CreateCustomError(601, "是否必传参数错误")
-	}
-
-	params.InterfaceId = interfaceId
+	params.InterfaceId = existingParam.InterfaceId
 	params.ParamsId = existingParam.ParamsId
 	if err := DB.Model(&existingParam).Updates(params).Error; err != nil {
 		return err
@@ -61,9 +87,9 @@ func (m *Interface) UpdateParams(interfaceId string, paramsId string, params dat
 
 // 删除参数 (单个)
 func (m *Interface) DeleteParams(interfaceId string, paramsId string) error {
-	var existingParam database.Params
-	if err := DB.Where("interface_id = ? AND params_id = ?", interfaceId, paramsId).First(&existingParam).Error; err != nil {
-		return cron.CreateCustomError(601, "参数不存在")
+	existingParam, err := m.ParamsExist(interfaceId, paramsId)
+	if err != nil {
+		return err
 	}
 
 	if err := DB.Delete(&existingParam).Error; err != nil {
@@ -78,33 +104,29 @@ func (m *Interface) SaveParams(interfaceId string, params []database.Params) err
 	existingParamsIds := []string{}
 	for _, param := range params {
 
-		if err := helper.CheckStringFormat(param.Name); err != nil {
+		if err := m.ParamsVerify(param); err != nil {
 			return err
-		}
-
-		if err := m.CheckParamType(param.Type); err != nil {
-			return err
-		}
-
-		if err := helper.CheckEnabled(param.Required); err != nil {
-			return cron.CreateCustomError(601, "是否必传参数错误")
 		}
 
 		param.InterfaceId = interfaceId
-		var existingParam database.Params
-		if err := DB.Where("params_id = ? AND interface_id = ?", param.ParamsId, interfaceId).First(&existingParam).Error; err == nil {
-			// Update existing param
-			if err := DB.Save(&param).Error; err != nil {
-				return err
-			}
-		} else {
+
+		if param.ParamsId == "" {
 			// Create new param
 			param.ParamsId = uuid.New().String()
 			if err := DB.Create(&param).Error; err != nil {
 				return err
 			}
-
+		} else {
+			_, err := m.ParamsExist(param.InterfaceId, param.ParamsId)
+			if err != nil {
+				return err
+			}
+			// Update existing param
+			if err := DB.Save(&param).Error; err != nil {
+				return err
+			}
 		}
+
 		existingParamsIds = append(existingParamsIds, param.ParamsId)
 	}
 

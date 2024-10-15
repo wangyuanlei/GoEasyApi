@@ -10,7 +10,12 @@ import (
 
 type Interface struct{}
 
+// 接口检验
 func (m *Interface) InterfaceVerify(info database.Interface) error {
+	if err := m.CheckInterfaceRequired(info); err != nil {
+		return err
+	}
+
 	if err := helper.CheckMethod(info.Method); err != nil {
 		return err
 	}
@@ -34,6 +39,20 @@ func (m *Interface) InterfaceVerify(info database.Interface) error {
 	return nil
 }
 
+// 检查参数是否必传
+func (m *Interface) CheckInterfaceRequired(params database.Interface) error {
+	if params.InterfaceName == "" {
+		return cron.CreateCustomError(601, "interfacename 必传参数未提交")
+	}
+	if params.Path == "" {
+		return cron.CreateCustomError(601, "path 必传参数未提交")
+	}
+	if params.Method == "" {
+		return cron.CreateCustomError(601, "method 必传参数未提交")
+	}
+	return nil
+}
+
 // 增加接口
 func (m *Interface) AddInterface(info database.Interface) (string, error) {
 
@@ -42,19 +61,20 @@ func (m *Interface) AddInterface(info database.Interface) (string, error) {
 	}
 
 	var existingInterface database.Interface
-
 	if DB.Where("path = ? AND method = ?", info.Path, info.Method).First(&existingInterface); existingInterface.InterfaceId != "" {
 		return "", cron.CreateCustomError(601, "接口["+info.Method+"]"+info.Path+" 已存在")
 	}
 
 	info.InterfaceId = uuid.New().String()
 
-	if err := DB.Create(&info).Error; err != nil {
-		return "", err
+	if len(info.Params) > 0 { //如果参数不为空. 保存数据
+		if err := m.SaveParams(info.InterfaceId, info.Params); err != nil {
+			return "", err
+		}
 	}
 
-	if len(info.Params) > 0 { //如果参数不为空. 保存数据
-		m.SaveParams(info.InterfaceId, info.Params)
+	if err := DB.Create(&info).Error; err != nil {
+		return "", err
 	}
 
 	return info.InterfaceId, nil
@@ -80,17 +100,19 @@ func (m *Interface) UpdateInterface(info database.Interface) error {
 		return cron.CreateCustomError(601, "接口["+info.Method+"]"+info.Path+" 已存在")
 	}
 
-	if err := DB.Model(&database.Interface{}).Updates(info).Error; err != nil {
-		return err
-	}
-
 	if len(info.Params) > 0 {
-		m.SaveParams(info.InterfaceId, info.Params)
+		if err := m.SaveParams(info.InterfaceId, info.Params); err != nil {
+			return err
+		}
 	} else {
 		//如果空 则情况一次参数表
 		if err := DB.Where("interface_id = ?", info.InterfaceId).Delete(&database.Params{}).Error; err != nil {
 			return err
 		}
+	}
+
+	if err := DB.Model(&database.Interface{}).Updates(info).Error; err != nil {
+		return err
 	}
 
 	return nil
