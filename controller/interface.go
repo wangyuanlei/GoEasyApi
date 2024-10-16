@@ -60,3 +60,47 @@ func UpdateInterface(ctx *gin.Context) {
 
 	helper.ApiSuccess(ctx, params.InterfaceId)
 }
+
+// 获得所有接口
+func GetList(ctx *gin.Context) {
+	interfaceList, err := InterfaceModel.GetList()
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, interfaceList)
+}
+
+// 获得接口详情
+func GetInfo(ctx *gin.Context) {
+	interface_id, ok := ctx.GetQuery("interface_id")
+	if !ok {
+		helper.ApiError(ctx, 601, "参数 interface_id 未提交", nil)
+		return
+	}
+
+	interfaceList, err := InterfaceModel.GetInfo(interface_id)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, interfaceList)
+}
+
+func DeleteInterface(ctx *gin.Context) {
+	interface_id, ok := ctx.GetQuery("interface_id")
+	if !ok {
+		helper.ApiError(ctx, 601, "参数 interface_id 未提交", nil)
+		return
+	}
+
+	err := InterfaceModel.DeleteInterface(interface_id)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, true)
+}

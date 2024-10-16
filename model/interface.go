@@ -136,16 +136,8 @@ func (m *Interface) DeleteInterface(interfaceId string) error {
 	return nil
 }
 
-type InterfaceList struct {
-	InterfaceId   string `gorm:"type:varchar(32);primary_key"` // 接口编号
-	InterfaceName string `gorm:"type:varchar(50)"`             // 接口名称
-	Description   string `gorm:"type:text"`                    // 接口描述
-	Path          string `gorm:"type:varchar(255)"`            // 接口路径
-	Method        string `gorm:"type:varchar(10)"`             // 接口方法
-}
-
 // 获得接口列表
-func (m *Interface) GetList() ([]InterfaceList, error) {
+func (m *Interface) GetList() ([]database.Interface, error) {
 	/*
 		实现逻辑以下逻辑
 		1. 获得接口列表.
@@ -153,8 +145,8 @@ func (m *Interface) GetList() ([]InterfaceList, error) {
 		3. 输出的字段根据 InterfaceList 结构来
 		3. 根据 Path 字段顺序排序
 	*/
-	var interfaceList []InterfaceList
-	if err := DB.Model(&database.Interface{}).Select("interface_id", "interface_name", "description", "path", "method").Order("path asc").Find(&interfaceList).Error; err != nil {
+	var interfaceList []database.Interface
+	if err := DB.Find(&interfaceList).Order("path asc").Error; err != nil {
 		return nil, err
 	}
 	return interfaceList, nil
@@ -170,7 +162,7 @@ func (m *Interface) GetInfo(InterfaceId string) (database.Interface, error) {
 	*/
 	var interfaceInfo database.Interface
 	if err := DB.Model(&database.Interface{}).Where("interface_id = ?", InterfaceId).First(&interfaceInfo).Error; err != nil {
-		return database.Interface{}, err
+		return database.Interface{}, cron.CreateCustomError(601, "接口不存在")
 	}
 
 	var params []database.Params

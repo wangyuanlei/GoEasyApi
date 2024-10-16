@@ -42,4 +42,7 @@ func RegisterRoutes(r *gin.Engine) {
 	//接口操作
 	r.POST("/manger/interface/add", controller.CheckAdminLogin, controller.AddInterface)       //添加接口
 	r.POST("/manger/interface/update", controller.CheckAdminLogin, controller.UpdateInterface) //修改接口
+	r.GET("/manger/interface/list", controller.CheckAdminLogin, controller.GetList)            //获得接口列表
+	r.GET("/manger/interface/info", controller.CheckAdminLogin, controller.GetInfo)            //获得接口详情
+	r.POST("/manger/interface/delete", controller.CheckAdminLogin, controller.DeleteInterface) //删除接口
 }
