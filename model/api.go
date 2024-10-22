@@ -30,6 +30,9 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//验证参数信息
+	if params, err := m.CheckParams(ctx, interfaceInfo); err != nil {
+		return nil, err
+	}
 
 	//判断是否开启缓存
 	if interfaceInfo.CacheEnabled == 1 {
@@ -146,4 +149,9 @@ func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface) (map[s
 	}
 
 	return paramsData, nil
+}
+
+// 执行接口任务
+func (m *Api) RunInterfaceTask(params map[string]string, Intchanface database.Interface) (interface{}, error) {
+	//根据params 组织sql 语句
 }
