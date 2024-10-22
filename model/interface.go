@@ -4,6 +4,7 @@ import (
 	"GoEasyApi/cron"
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
+	"GoEasyApi/libraries"
 
 	"github.com/google/uuid"
 )
@@ -76,6 +77,10 @@ func (m *Interface) AddInterface(info database.Interface) (string, error) {
 	if err := DB.Create(&info).Error; err != nil {
 		return "", err
 	}
+	//更新缓存
+	if err := m.UpdateCacheByPath(info.Path); err != nil {
+		return "", err
+	}
 
 	return info.InterfaceId, nil
 }
@@ -115,6 +120,11 @@ func (m *Interface) UpdateInterface(info database.Interface) error {
 		return err
 	}
 
+	//更新缓存
+	if err := m.UpdateCacheByPath(info.Path); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -132,6 +142,10 @@ func (m *Interface) DeleteInterface(interfaceId string) error {
 	if err := DB.Where("interface_id = ?", interfaceId).Delete(&database.Params{}).Error; err != nil {
 		return err
 	}
+
+	//清除缓存
+	cacheKey := m.GetCacheKeyByPath(existingInterface.Path)
+	libraries.DeleteCache(cacheKey)
 
 	return nil
 }
@@ -172,4 +186,53 @@ func (m *Interface) GetInfo(InterfaceId string) (database.Interface, error) {
 
 	interfaceInfo.Params = params
 	return interfaceInfo, nil
+}
+
+func (m *Interface) GetInfoByPath(path string) (database.Interface, error) {
+	var interfaceInfo database.Interface
+
+	cacheKey := m.GetCacheKeyByPath(path)
+	_Interface, IsExists := libraries.GetCache(cacheKey)
+	if IsExists { //存在缓存 从缓存中获取
+		return _Interface.(database.Interface), nil
+	}
+
+	if err := DB.Model(&database.Interface{}).Where("path = ?", path).First(&interfaceInfo).Error; err != nil {
+		return database.Interface{}, cron.CreateCustomError(601, "接口不存在")
+	}
+
+	var params []database.Params
+	if err := DB.Model(&database.Params{}).Where("interface_id = ?", interfaceInfo.InterfaceId).Find(&params).Error; err != nil {
+		return database.Interface{}, err
+	}
+
+	interfaceInfo.Params = params
+	libraries.AddCache(cacheKey, interfaceInfo, 0)
+
+	return interfaceInfo, nil
+}
+
+// 更新接口缓存
+func (m *Interface) UpdateCacheByPath(path string) error {
+
+	var interfaceInfo database.Interface
+	if err := DB.Model(&database.Interface{}).Where("path = ?", path).First(&interfaceInfo).Error; err != nil {
+		return cron.CreateCustomError(601, "接口不存在")
+	}
+
+	var params []database.Params
+	if err := DB.Model(&database.Params{}).Where("interface_id = ?", interfaceInfo.InterfaceId).Find(&params).Error; err != nil {
+		return err
+	}
+
+	interfaceInfo.Params = params
+	cacheKey := m.GetCacheKeyByPath(path)
+	libraries.AddCache(cacheKey, interfaceInfo, 0)
+
+	return nil
+}
+
+// 获得接口详情的缓存key
+func (m *Interface) GetCacheKeyByPath(path string) string {
+	return "Interface_Info_" + helper.HashMD5(path)
 }

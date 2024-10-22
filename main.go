@@ -5,6 +5,7 @@ import (
 	"GoEasyApi/libraries"
 	"GoEasyApi/model"
 	"GoEasyApi/route"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,8 +18,10 @@ func init() {
 
 func main() {
 	ginServer := gin.Default()
-	route.RegisterRoutes(ginServer)
+	ginServer.StaticFS("/static", http.Dir("./static")) //加载静态文件
+	ginServer.StaticFile("/favicon.ico", "./static/favicon.ico")
 
+	route.RegisterRoutes(ginServer)
 	bindAddress, _ := libraries.GetBind()
 	if bindAddress == "" {
 		bindAddress = ":8008"

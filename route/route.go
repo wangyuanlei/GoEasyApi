@@ -11,8 +11,9 @@ func RegisterRoutes(r *gin.Engine) {
 	//健康接口
 	r.GET("/health", controller.Health)
 	//用户接口
-	r.GET("/api/*path", controller.GetApi)                                          //
-	r.POST("/api/*path", controller.PostApi)                                        //
+	r.GET("/api/*path", controller.GetApi)   //
+	r.POST("/api/*path", controller.PostApi) //
+
 	r.POST("/user/register", controller.UserRegister)                               // 用户注册
 	r.POST("/user/login", controller.UserLogin)                                     // 用户登入
 	r.GET("/user/user_info", controller.CheckUserLogin, controller.GetUserInfoByMe) // 登录用户获得个人信息

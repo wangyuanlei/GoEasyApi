@@ -34,6 +34,12 @@ func DoubleHashPassword(pass, salt string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
+func HashMD5(val string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(val))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 // GenerateRandomString 生成一个随机的6位字符串
 func GenerateRandomString(length int) string {
 	str := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -124,4 +130,9 @@ func CheckStringFormat(str string) error {
 		return cron.CreateCustomError(601, "字符串只能包含大小写字母、数字和下划线")
 	}
 	return nil
+}
+
+// 正则表达式验证
+func MatchString(reg string, str string) bool {
+	return regexp.MustCompile(reg).MatchString(str)
 }
