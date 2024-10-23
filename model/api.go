@@ -6,14 +6,22 @@ import (
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/cengsin/oracle"
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlserver"
+	"gorm.io/gorm"
 )
 
 type Api struct{}
 
 var InterfaceModel = Interface{}
+var UserDB *gorm.DB
 
 func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	//获得接口信息
@@ -30,7 +38,8 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//验证参数信息
-	if params, err := m.CheckParams(ctx, interfaceInfo); err != nil {
+	params, err := m.CheckGetParams(ctx, interfaceInfo)
+	if err != nil {
 		return nil, err
 	}
 
@@ -41,10 +50,13 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 		if IsExists { //存在缓存 从缓存中获取
 			return _CacheData, nil
 		}
-
 	}
 
-	//执行接口
+	//获得要执行的sql
+	sql, err := m.GetInterfaceSql(params, interfaceInfo.SqlContent)
+	if err != nil {
+		return nil, err
+	}
 
 	if interfaceInfo.CacheEnabled == 1 { //开启缓存 写入缓存
 
@@ -96,7 +108,7 @@ func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface
 }
 
 // 验证参数
-func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface) (map[string]string, error) {
+func (m *Api) CheckGetParams(ctx *gin.Context, Interface database.Interface) (map[string]string, error) {
 	var paramsData = make(map[string]string)
 
 	for _, paramItem := range Interface.Params {
@@ -151,7 +163,65 @@ func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface) (map[s
 	return paramsData, nil
 }
 
-// 执行接口任务
-func (m *Api) RunInterfaceTask(params map[string]string, Intchanface database.Interface) (interface{}, error) {
+// 根据参数 和 接口sql 获得sql 语句
+func (m *Api) GetInterfaceSql(params map[string]string, sql_content string) (string, error) {
+
 	//根据params 组织sql 语句
+	for k, v := range params {
+		sql_content = strings.Replace(sql_content, "{{"+k+"}}", v, -1)
+	}
+
+	return sql_content, nil
+}
+
+// 获得数据库连接
+func (m *Api) InitUserDB() (*gorm.DB, error) {
+	var DBModel = DataBase{}
+	//获得数据库连接配置
+	dbConfig, err := DBModel.GetUserDBConf()
+	if err != nil {
+		return nil, err
+	}
+
+	//获得数据库连接句柄
+	if dbConfig.OrmType == "mysql" {
+		//dsn := "username:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+		UserDB, err = gorm.Open(mysql.Open(dbConfig.Dns), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database:")
+		}
+	} else if dbConfig.OrmType == "postgresql" {
+		//dsn := "host=localhost user=your_username password=your_password dbname=your_db port=5432 sslmode=disable"
+		UserDB, err = gorm.Open(postgres.Open(dbConfig.Dns), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database")
+		}
+	} else if dbConfig.OrmType == "sqlite" {
+		//dsn := "test.db"
+		UserDB, err = gorm.Open(sqlite.Open(dbConfig.Dns), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database")
+		}
+	} else if dbConfig.OrmType == "sqlserver" {
+		//dsn := "sqlserver://username:password@localhost:1433?database=dbname"
+		UserDB, err = gorm.Open(sqlserver.Open(dbConfig.Dns), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect to database")
+		}
+	} else if dbConfig.OrmType == "oracle" {
+		//dsn := "system/oracle@127.0.0.1:1521/XE"
+		UserDB, err = gorm.Open(oracle.Open(dbConfig.Dns), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database")
+		}
+	} else {
+		return nil, cron.CreateCustomError(602, "数据库类型错误")
+	}
+
+	return UserDB, nil
+
+}
+
+func (m *Api) run(ctx *gin.Context, Interface database.Interface) (interface{}, error) {
+
 }
