@@ -82,6 +82,15 @@ type Interface struct {
 	Params                 []Params
 }
 
+/*
+ReturnType: 对应的类型
+1. row 获得一条数据(单条) row
+2. list 获得数据列表.(多条)
+3. pagelist 分页形式获得数据(多条+分页)
+4. update 数据更新  返回 bool 类型 true/false
+5. insert 新增数据, 返回数据新增id  (mysql, pgsql支持. 其他数据库不支持)
+*/
+
 type Params struct {
 	ParamsId    string `gorm:"type:varchar(32);primary_key"` // 接口编号
 	InterfaceId string `gorm:"type:varchar(32)"`             // 接口编号

@@ -5,6 +5,7 @@ import (
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -222,6 +223,66 @@ func (m *Api) InitUserDB() (*gorm.DB, error) {
 
 }
 
-func (m *Api) run(ctx *gin.Context, Interface database.Interface) (interface{}, error) {
+// 获得单行数据
+func (m *Api) GetRow(sql string) (map[string]interface{}, error) {
+	var data map[string]interface{}
+	err := UserDB.Raw(sql).Scan(&data).Error
 
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
+
+// 获得多行数据
+func (m *Api) GetList(sql string) ([]map[string]interface{}, error) {
+	var data []map[string]interface{}
+	err := UserDB.Raw(sql).Scan(&data).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// PageResult 定义分页的数据结构体
+type PageResult struct {
+	PageNo    int                      `json:"pageNo"`    // 当前页码
+	PageCount int                      `json:"pageCount"` // 总页数
+	DataCount int                      `json:"dataCount"` // 总数据条数
+	Data      []map[string]interface{} `json:"data"`      // 当前页数据
+}
+
+// 获得分页数据
+func (m *Api) GetPageList(sql string, pageNo int, pageSize int) (PageResult, error) {
+	var results []map[string]interface{}
+	var totalCount int64
+	offset := (pageNo - 1) * pageSize
+
+	DB.Raw(fmt.Sprintf("SELECT COUNT(*) FROM (%s) as count_table", sql)).Scan(&totalCount)
+	paginatedSQL := fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, pageSize, offset)
+	DB.Raw(paginatedSQL).Scan(&results)
+
+	pageCount := int((totalCount + int64(pageSize) - 1) / int64(pageSize))
+
+	return PageResult{
+		PageNo:    pageNo,
+		PageCount: pageCount,
+		DataCount: int(totalCount),
+		Data:      results,
+	}, nil
+}
+
+// 执行sql 返回是否成功
+func (m *Api) ExecSql(sql string) bool {
+	err := UserDB.Exec(sql).Error
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+//执行sql 变

@@ -33,7 +33,7 @@ func (m *Interface) InterfaceVerify(info database.Interface) error {
 		return cron.CreateCustomError(601, "是否设置验证token的值设置错误, 1是 2否")
 	}
 
-	if err := helper.CheckParamItem(info.ReturnType, "bool|string|array|list|page"); err != nil {
+	if err := helper.CheckParamItem(info.ReturnType, "row|list|pagelist|update|insert"); err != nil {
 		return err
 	}
 
