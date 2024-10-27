@@ -5,24 +5,16 @@ import (
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
-	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
-	"github.com/cengsin/oracle"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
-	"gorm.io/driver/sqlserver"
-	"gorm.io/gorm"
 )
 
 type Api struct{}
 
 var InterfaceModel = Interface{}
-var UserDB *gorm.DB
+var Api_Model = ApiModel{}
 
 func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	//获得接口信息
@@ -39,37 +31,86 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//验证参数信息
-	params, err := m.CheckGetParams(ctx, interfaceInfo)
+	params, err := m.CheckParams(ctx, interfaceInfo, "get")
 	if err != nil {
 		return nil, err
 	}
 
 	//判断是否开启缓存
+	cacheKey := m.GetCacheKeyByParams(ctx, interfaceInfo)
 	if interfaceInfo.CacheEnabled == 1 {
-		cacheKey := m.GetCacheKeyByParams(ctx, interfaceInfo)
 		_CacheData, IsExists := libraries.GetCache(cacheKey)
 		if IsExists { //存在缓存 从缓存中获取
 			return _CacheData, nil
 		}
 	}
 
-	//获得要执行的sql
-	sql, err := m.GetInterfaceSql(params, interfaceInfo.SqlContent)
+	Api_Model.Init()
+	data, err := Api_Model.Run(interfaceInfo, params)
 	if err != nil {
 		return nil, err
 	}
 
-	if interfaceInfo.CacheEnabled == 1 { //开启缓存 写入缓存
-
+	if interfaceInfo.ReturnType == "insert" ||
+		interfaceInfo.ReturnType == "update" ||
+		interfaceInfo.ReturnType == "delete" {
+		//这几种类型不错缓存
+	} else {
+		if interfaceInfo.CacheEnabled == 1 { //开启缓存 写入缓存
+			libraries.AddCache(cacheKey, data, time.Duration(interfaceInfo.CacheTime)*time.Second)
+		}
 	}
 
-	return interfaceInfo, nil
-
+	return data, nil
 }
 
-// func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
-// 	path := ctx.Request.URL.Path
-// }
+func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
+	//获得接口信息
+	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	//判断是否使用token验证
+	if interfaceInfo.TokenValidationEnabled == 1 {
+		if err := m.CheckUserLogin(ctx); err != nil {
+			return nil, err
+		}
+	}
+
+	//验证参数信息
+	params, err := m.CheckParams(ctx, interfaceInfo, "post")
+	if err != nil {
+		return nil, err
+	}
+
+	//判断是否开启缓存
+	cacheKey := m.GetCacheKeyByParams(ctx, interfaceInfo)
+	if interfaceInfo.CacheEnabled == 1 {
+		_CacheData, IsExists := libraries.GetCache(cacheKey)
+		if IsExists { //存在缓存 从缓存中获取
+			return _CacheData, nil
+		}
+	}
+
+	Api_Model.Init()
+	data, err := Api_Model.Run(interfaceInfo, params)
+	if err != nil {
+		return nil, err
+	}
+
+	if interfaceInfo.ReturnType == "insert" ||
+		interfaceInfo.ReturnType == "update" ||
+		interfaceInfo.ReturnType == "delete" {
+		//这几种类型不错缓存
+	} else {
+		if interfaceInfo.CacheEnabled == 1 { //开启缓存 写入缓存
+			libraries.AddCache(cacheKey, data, time.Duration(interfaceInfo.CacheTime)*time.Second)
+		}
+	}
+
+	return data, nil
+}
 
 func (m *Api) CheckUserLogin(ctx *gin.Context) error {
 	token := ctx.GetHeader("usertoken")
@@ -108,17 +149,25 @@ func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface
 	return "Interface_Data_" + helper.HashMD5(paramsText)
 }
 
-// 验证参数
-func (m *Api) CheckGetParams(ctx *gin.Context, Interface database.Interface) (map[string]string, error) {
+// 验证get/post参数
+func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface, method string) (map[string]string, error) {
 	var paramsData = make(map[string]string)
 
 	for _, paramItem := range Interface.Params {
 		var _param string
 
-		if paramItem.Default != "" {
-			_param = ctx.DefaultQuery(paramItem.Name, paramItem.Default)
+		if method == "post" {
+			if paramItem.Default != "" {
+				_param = ctx.DefaultPostForm(paramItem.Name, paramItem.Default)
+			} else {
+				_param = ctx.PostForm(paramItem.Name)
+			}
 		} else {
-			_param = ctx.Query(paramItem.Name)
+			if paramItem.Default != "" {
+				_param = ctx.DefaultQuery(paramItem.Name, paramItem.Default)
+			} else {
+				_param = ctx.Query(paramItem.Name)
+			}
 		}
 
 		//判断是否必填
@@ -160,129 +209,5 @@ func (m *Api) CheckGetParams(ctx *gin.Context, Interface database.Interface) (ma
 
 		paramsData[paramItem.Name] = _param
 	}
-
 	return paramsData, nil
 }
-
-// 根据参数 和 接口sql 获得sql 语句
-func (m *Api) GetInterfaceSql(params map[string]string, sql_content string) (string, error) {
-
-	//根据params 组织sql 语句
-	for k, v := range params {
-		sql_content = strings.Replace(sql_content, "{{"+k+"}}", v, -1)
-	}
-
-	return sql_content, nil
-}
-
-// 获得数据库连接
-func (m *Api) InitUserDB() (*gorm.DB, error) {
-	var DBModel = DataBase{}
-	//获得数据库连接配置
-	dbConfig, err := DBModel.GetUserDBConf()
-	if err != nil {
-		return nil, err
-	}
-
-	//获得数据库连接句柄
-	if dbConfig.OrmType == "mysql" {
-		//dsn := "username:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-		UserDB, err = gorm.Open(mysql.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect database:")
-		}
-	} else if dbConfig.OrmType == "postgresql" {
-		//dsn := "host=localhost user=your_username password=your_password dbname=your_db port=5432 sslmode=disable"
-		UserDB, err = gorm.Open(postgres.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect database")
-		}
-	} else if dbConfig.OrmType == "sqlite" {
-		//dsn := "test.db"
-		UserDB, err = gorm.Open(sqlite.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect database")
-		}
-	} else if dbConfig.OrmType == "sqlserver" {
-		//dsn := "sqlserver://username:password@localhost:1433?database=dbname"
-		UserDB, err = gorm.Open(sqlserver.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect to database")
-		}
-	} else if dbConfig.OrmType == "oracle" {
-		//dsn := "system/oracle@127.0.0.1:1521/XE"
-		UserDB, err = gorm.Open(oracle.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect database")
-		}
-	} else {
-		return nil, cron.CreateCustomError(602, "数据库类型错误")
-	}
-
-	return UserDB, nil
-
-}
-
-// 获得单行数据
-func (m *Api) GetRow(sql string) (map[string]interface{}, error) {
-	var data map[string]interface{}
-	err := UserDB.Raw(sql).Scan(&data).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
-// 获得多行数据
-func (m *Api) GetList(sql string) ([]map[string]interface{}, error) {
-	var data []map[string]interface{}
-	err := UserDB.Raw(sql).Scan(&data).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
-// PageResult 定义分页的数据结构体
-type PageResult struct {
-	PageNo    int                      `json:"pageNo"`    // 当前页码
-	PageCount int                      `json:"pageCount"` // 总页数
-	DataCount int                      `json:"dataCount"` // 总数据条数
-	Data      []map[string]interface{} `json:"data"`      // 当前页数据
-}
-
-// 获得分页数据
-func (m *Api) GetPageList(sql string, pageNo int, pageSize int) (PageResult, error) {
-	var results []map[string]interface{}
-	var totalCount int64
-	offset := (pageNo - 1) * pageSize
-
-	DB.Raw(fmt.Sprintf("SELECT COUNT(*) FROM (%s) as count_table", sql)).Scan(&totalCount)
-	paginatedSQL := fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, pageSize, offset)
-	DB.Raw(paginatedSQL).Scan(&results)
-
-	pageCount := int((totalCount + int64(pageSize) - 1) / int64(pageSize))
-
-	return PageResult{
-		PageNo:    pageNo,
-		PageCount: pageCount,
-		DataCount: int(totalCount),
-		Data:      results,
-	}, nil
-}
-
-// 执行sql 返回是否成功
-func (m *Api) ExecSql(sql string) bool {
-	err := UserDB.Exec(sql).Error
-	if err != nil {
-		return false
-	} else {
-		return true
-	}
-}
-
-//执行sql 变

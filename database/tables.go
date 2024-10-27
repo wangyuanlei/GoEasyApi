@@ -79,16 +79,20 @@ type Interface struct {
 	SqlContent             string `gorm:"type:text"`                    // 接口sql语句
 	TokenValidationEnabled int    `gorm:"type:int"`                     // 是否启用token验证
 	ReturnType             string `gorm:"type:varchar(50)"`             // 接口返回类型
+	ReturnValMode          string `gorm:"type:varchar(50)"`             // 接口返回模式
 	Params                 []Params
 }
 
 /*
-ReturnType: 对应的类型
-1. row 获得一条数据(单条) row
-2. list 获得数据列表.(多条)
-3. pagelist 分页形式获得数据(多条+分页)
-4. update 数据更新  返回 bool 类型 true/false
-5. insert 新增数据, 返回数据新增id  (mysql, pgsql支持. 其他数据库不支持)
+1. 数据添加类型端口: ReturnType:insert
+   1. 对于mysql 可以返回自增id, 或者uuid. 	ReturnValMode:last_id
+   2. 对于没有自增的id 可以指定uuid.		ReturnValMode:uuid
+2. 数据修改/删除类型接口: ReturnType:update/delete
+   1. 返回 bool 类型, 或者返回 修改后的 数据. ReturnValMode:row / bool
+3. 数据单条查询接口: ReturnType:row
+   1. 返回单条数据. 列子: {"name":"张三"}
+4. 数据多条查询接口: ReturnType:list
+   1. 返回多条数据. 列子: [{"name":"张三"},{"name":"李四"}]
 */
 
 type Params struct {
@@ -102,6 +106,24 @@ type Params struct {
 	Example     string `gorm:"type:text"`                    // 示例值
 	Regex       string `gorm:"type:text"`                    // 正则表达式
 }
+
+/*
+Type: 定义
+	string 字符串类型. 支持正则校验
+	int 强转换成整型
+	float 强转换成浮点类型
+	bool 强制设置成 1 是 2 否
+	date 日期类型 YYYY-mm-dd
+	datetime 日期时间类型 YYYY-mm-dd HH:ii:ss
+*/
+
+/*
+sql: 系统变量
+	_uuid  不需要输入的类型,  自动生成一个uuid值. 然后再sql 中使用
+	_nowDate: 不需要输入的类型, 生成日期
+	_nowDateTime: 不需要输入的类型: 自动生成日期时间
+	_uid: 不需要输入的类型, 当前用户id
+*/
 
 /*
 表: user
