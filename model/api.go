@@ -44,8 +44,7 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 			return _CacheData, nil
 		}
 	}
-
-	Api_Model.Init()
+	Api_Model.InitApiDB()
 	data, err := Api_Model.Run(interfaceInfo, params)
 	if err != nil {
 		return nil, err
@@ -92,8 +91,7 @@ func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 			return _CacheData, nil
 		}
 	}
-
-	Api_Model.Init()
+	Api_Model.InitApiDB()
 	data, err := Api_Model.Run(interfaceInfo, params)
 	if err != nil {
 		return nil, err
@@ -115,7 +113,7 @@ func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 func (m *Api) CheckUserLogin(ctx *gin.Context) error {
 	token := ctx.GetHeader("usertoken")
 	if token == "" {
-		return cron.CreateCustomError(500, "oken 未提交")
+		return cron.CreateCustomError(500, "token 未提交")
 	}
 
 	tokenModel := Token{}

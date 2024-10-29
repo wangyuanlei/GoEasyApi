@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -19,7 +19,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	DB, err = gorm.Open("sqlite3", dbPath)
+	DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,10 +27,6 @@ func InitDB() *gorm.DB {
 	DB.AutoMigrate(&database.WhiteList{}, &database.BlackList{}, &database.Database{}, &database.Interface{}, &database.Params{}, &database.User{}, &database.Token{})
 
 	return DB
-}
-
-func CloseDB() {
-	defer DB.Close()
 }
 
 // 如果文件不存在, 则创建文件, 并且新建数据库

@@ -3,10 +3,11 @@ package model
 import (
 	"GoEasyApi/cron"
 	"GoEasyApi/database"
+	"fmt"
 	"regexp"
 	"strings"
 
-	"github.com/cengsin/oracle"
+	// "github.com/cengsin/oracle"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -21,10 +22,10 @@ type ApiModel struct {
 }
 
 // 初始化
-func (m *ApiModel) Init() error {
+func (m *ApiModel) InitApiDB() error {
 
-	var DBModel = DataBase{}
-	dbConfig, err := DBModel.GetUserDBConf()
+	var DataBaseModel = DataBase{}
+	dbConfig, err := DataBaseModel.GetUserDBConf()
 	if err != nil {
 		return err
 	}
@@ -56,12 +57,12 @@ func (m *ApiModel) Init() error {
 		if err != nil {
 			panic("failed to connect to database")
 		}
-	} else if m.DBType == "oracle" {
-		//dsn := "system/oracle@127.0.0.1:1521/XE"
-		m.DB, err = gorm.Open(oracle.Open(dbConfig.Dns), &gorm.Config{})
-		if err != nil {
-			panic("failed to connect database")
-		}
+		// } else if m.DBType == "oracle" {
+		// 	//dsn := "system/oracle@127.0.0.1:1521/XE"
+		// 	m.DB, err = gorm.Open(oracle.Open(dbConfig.Dns), &gorm.Config{})
+		// 	if err != nil {
+		// 		panic("failed to connect database")
+		// 	}
 	} else {
 		return cron.CreateCustomError(602, "数据库类型错误")
 	}
@@ -153,25 +154,25 @@ func (m *ApiModel) Delete(sql_content string, params map[string]string) (string,
 }
 
 // 获得单条数据
-func (m *ApiModel) GetOne(sql_content string, params map[string]string) ([]interface{}, error) {
+func (m *ApiModel) GetOne(sql_content string, params map[string]string) (map[string]interface{}, error) {
 	newSql, newParams, err := m.HandleSql(sql_content, params)
 	if err != nil {
 		return nil, err
 	}
-	var data []interface{}
-	if err := m.DB.Raw(newSql, newParams...).Scan(&data).Error; err != nil {
+	var data map[string]interface{}
+	if err := m.DB.Raw(newSql, newParams...).Scan(&data).Error; err != nil { // Ensure data is a pointer
 		return nil, err
 	}
 	return data, nil
 }
 
 // 获得多条数据
-func (m *ApiModel) GetList(sql_content string, params map[string]string) ([]interface{}, error) {
+func (m *ApiModel) GetList(sql_content string, params map[string]string) ([]map[string]interface{}, error) {
 	newSql, newParams, err := m.HandleSql(sql_content, params)
 	if err != nil {
 		return nil, err
 	}
-	var data []interface{}
+	var data []map[string]interface{}
 	if err := m.DB.Raw(newSql, newParams...).Scan(&data).Error; err != nil {
 		return nil, err
 	}
@@ -195,6 +196,9 @@ func (m *ApiModel) HandleSql(sql_content string, params map[string]string) (newS
 
 		newSql = strings.Replace(newSql, "{{"+key[1]+"}}", "?", -1)
 	}
+
+	fmt.Println("newSql", newSql)
+	fmt.Println(paramValues)
 
 	return newSql, paramValues, nil
 }

@@ -5,6 +5,7 @@ import (
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -196,6 +197,10 @@ func (m *Interface) GetInfo(InterfaceId string) (database.Interface, error) {
 
 func (m *Interface) GetInfoByPath(path string) (database.Interface, error) {
 	var interfaceInfo database.Interface
+
+	if strings.HasPrefix(path, "/api") {
+		path = path[4:]
+	}
 
 	cacheKey := m.GetCacheKeyByPath(path)
 	_Interface, IsExists := libraries.GetCache(cacheKey)
