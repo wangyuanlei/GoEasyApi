@@ -5,6 +5,7 @@ import (
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -39,6 +40,7 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	//判断是否开启缓存
 	cacheKey := m.GetCacheKeyByParams(ctx, interfaceInfo)
 	if interfaceInfo.CacheEnabled == 1 {
+		fmt.Println("cacheKey:", cacheKey)
 		_CacheData, IsExists := libraries.GetCache(cacheKey)
 		if IsExists { //存在缓存 从缓存中获取
 			return _CacheData, nil
@@ -132,6 +134,7 @@ func (m *Api) CheckUserLogin(ctx *gin.Context) error {
 func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface) string {
 
 	var paramsText string
+	fmt.Println("Interface.Params:", Interface.Params)
 	for _, param := range Interface.Params {
 		if param.Default != "" {
 			paramsText += param.Name + "=" + ctx.DefaultQuery(param.Name, param.Default) + "&"
@@ -143,6 +146,8 @@ func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface
 	if len(paramsText) > 0 {
 		paramsText = paramsText[:len(paramsText)-1] // Remove the trailing '&'
 	}
+
+	fmt.Println("paramsText:", paramsText)
 
 	return "Interface_Data_" + helper.HashMD5(paramsText)
 }
