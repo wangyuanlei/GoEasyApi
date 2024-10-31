@@ -195,7 +195,7 @@ func (m *Interface) GetInfo(InterfaceId string) (database.Interface, error) {
 	return interfaceInfo, nil
 }
 
-func (m *Interface) GetInfoByPath(path string) (database.Interface, error) {
+func (m *Interface) GetInfoByPath(path string, method string) (database.Interface, error) {
 	var interfaceInfo database.Interface
 
 	if strings.HasPrefix(path, "/api") {
@@ -208,7 +208,7 @@ func (m *Interface) GetInfoByPath(path string) (database.Interface, error) {
 		return _Interface.(database.Interface), nil
 	}
 
-	if err := DB.Model(&database.Interface{}).Where("path = ?", path).First(&interfaceInfo).Error; err != nil {
+	if err := DB.Model(&database.Interface{}).Where("path = ? and method = ?", path, method).First(&interfaceInfo).Error; err != nil {
 		return database.Interface{}, cron.CreateCustomError(601, "接口不存在")
 	}
 

@@ -19,7 +19,7 @@ var Api_Model = ApiModel{}
 
 func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	//获得接口信息
-	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path)
+	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path, "get")
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//验证参数信息
-	params, err := m.CheckParams(ctx, interfaceInfo, "get")
+	params, err := m.CheckParams(ctx, interfaceInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,6 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 	//判断是否开启缓存
 	cacheKey := m.GetCacheKeyByParams(ctx, interfaceInfo)
 	if interfaceInfo.CacheEnabled == 1 {
-		fmt.Println("cacheKey:", cacheKey)
 		_CacheData, IsExists := libraries.GetCache(cacheKey)
 		if IsExists { //存在缓存 从缓存中获取
 			return _CacheData, nil
@@ -67,7 +66,7 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 
 func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 	//获得接口信息
-	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path)
+	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path, "post")
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +79,7 @@ func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 	}
 
 	//验证参数信息
-	params, err := m.CheckParams(ctx, interfaceInfo, "post")
+	params, err := m.CheckParams(ctx, interfaceInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -134,38 +133,48 @@ func (m *Api) CheckUserLogin(ctx *gin.Context) error {
 func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface) string {
 
 	var paramsText string
-	fmt.Println("Interface.Params:", Interface.Params)
-	for _, param := range Interface.Params {
-		if param.Default != "" {
-			paramsText += param.Name + "=" + ctx.DefaultQuery(param.Name, param.Default) + "&"
-		} else {
-			paramsText += param.Name + "=" + ctx.Query(param.Name) + "&"
-		}
+	if Interface.Method == "get" {
+		for _, param := range Interface.Params {
+			if param.Default != "" {
+				paramsText += param.Name + "=" + ctx.DefaultQuery(param.Name, param.Default) + "&"
+			} else {
+				paramsText += param.Name + "=" + ctx.Query(param.Name) + "&"
+			}
 
+		}
+	} else if Interface.Method == "post" {
+		for _, param := range Interface.Params {
+			if param.Default != "" {
+				paramsText += param.Name + "=" + ctx.DefaultPostForm(param.Name, param.Default) + "&"
+			} else {
+				paramsText += param.Name + "=" + ctx.PostForm(param.Name) + "&"
+			}
+
+		}
 	}
+
 	if len(paramsText) > 0 {
 		paramsText = paramsText[:len(paramsText)-1] // Remove the trailing '&'
 	}
 
-	fmt.Println("paramsText:", paramsText)
-
-	return "Interface_Data_" + helper.HashMD5(paramsText)
+	fmt.Println("cacheKey:", Interface.Path+Interface.Method+paramsText)
+	return "Interface_Data_" + helper.HashMD5(Interface.Path+Interface.Method+paramsText)
 }
 
 // 验证get/post参数
-func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface, method string) (map[string]string, error) {
+func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface) (map[string]string, error) {
 	var paramsData = make(map[string]string)
 
 	for _, paramItem := range Interface.Params {
 		var _param string
 
-		if method == "post" {
+		if Interface.Method == "post" {
 			if paramItem.Default != "" {
 				_param = ctx.DefaultPostForm(paramItem.Name, paramItem.Default)
 			} else {
 				_param = ctx.PostForm(paramItem.Name)
 			}
-		} else {
+		} else if Interface.Method == "get" {
 			if paramItem.Default != "" {
 				_param = ctx.DefaultQuery(paramItem.Name, paramItem.Default)
 			} else {
