@@ -5,6 +5,7 @@ import (
 	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -80,6 +81,8 @@ func (m *Interface) AddInterface(info database.Interface) (string, error) {
 			return "", err
 		}
 	}
+
+	fmt.Println("info:", info)
 
 	if err := DB.Create(&info).Error; err != nil {
 		return "", err
