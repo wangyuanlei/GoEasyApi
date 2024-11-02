@@ -1,8 +1,8 @@
 package model
 
 import (
-	"GoEasyApi/database"
 	"GoEasyApi/libraries"
+	"GoEasyApi/structs"
 	"log"
 	"os"
 
@@ -24,7 +24,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 	//建立数据表
-	DB.AutoMigrate(&database.WhiteList{}, &database.BlackList{}, &database.Database{}, &database.Interface{}, &database.Params{}, &database.User{}, &database.Token{})
+	DB.AutoMigrate(&structs.WhiteList{}, &structs.BlackList{}, &structs.Database{}, &structs.Interface{}, &structs.Params{}, &structs.User{}, &structs.Token{})
 
 	return DB
 }
@@ -39,6 +39,6 @@ func CreateNewDBFile() {
 	// 判断文件是否存在.
 	if _, err = os.Stat(dbPath); os.IsNotExist(err) {
 		// 自动创建数据表
-		DB.AutoMigrate(&database.WhiteList{}, &database.BlackList{}, &database.Database{}, &database.Interface{}, &database.Params{}, &database.User{}, &database.Token{})
+		DB.AutoMigrate(&structs.WhiteList{}, &structs.BlackList{}, &structs.Database{}, &structs.Interface{}, &structs.Params{}, &structs.User{}, &structs.Token{})
 	}
 }

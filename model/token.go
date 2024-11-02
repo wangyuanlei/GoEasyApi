@@ -2,8 +2,8 @@ package model
 
 import (
 	"GoEasyApi/cron"
-	"GoEasyApi/database"
 	"GoEasyApi/libraries"
+	"GoEasyApi/structs"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,7 +14,7 @@ type Token struct{}
 // 获得一个新的token
 func (t *Token) NewId() string {
 	token := uuid.New().String()
-	var existing database.Token
+	var existing structs.Token
 	if err := DB.Where("token = ?", token).First(&existing).Error; err == nil {
 		return t.NewId()
 	}
@@ -26,7 +26,7 @@ func (t *Token) NewId() string {
 func (t *Token) CreateToken(userId string) (string, error) {
 	token := t.NewId()
 
-	err := DB.Create(&database.Token{
+	err := DB.Create(&structs.Token{
 		Token:     token,
 		UserId:    userId,
 		ValidTime: time.Now().Add(2 * time.Hour),
@@ -39,7 +39,7 @@ func (t *Token) CreateToken(userId string) (string, error) {
 
 // 删除token
 func (t *Token) DeleteToken(token string) error {
-	err := DB.Delete(&database.Token{Token: token}).Error
+	err := DB.Delete(&structs.Token{Token: token}).Error
 	libraries.DeleteCache(token) //从 cache 删除token
 	return err
 }
@@ -51,7 +51,7 @@ func (t *Token) GetTokenInfo(token string) (string, error) {
 		return userId.(string), nil
 	}
 
-	var dbToken database.Token
+	var dbToken structs.Token
 	err := DB.Where("token = ?", token).First(&dbToken).Error
 	if err != nil {
 		return "", err
@@ -66,7 +66,7 @@ func (t *Token) GetTokenInfo(token string) (string, error) {
 
 // 给 token 续时间(2小时)
 func (t *Token) TokenExtendTime(userId string, token string) error {
-	err := DB.Model(&database.Token{}).Where("token = ?", token).Update("valid_time", time.Now().Add(2*time.Hour)).Error
+	err := DB.Model(&structs.Token{}).Where("token = ?", token).Update("valid_time", time.Now().Add(2*time.Hour)).Error
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (t *Token) TokenExtendTime(userId string, token string) error {
 
 // 清理过期的token
 func (t *Token) ClearToken() {
-	var expiredTokens []database.Token
+	var expiredTokens []structs.Token
 	DB.Where("valid_time < ?", time.Now()).Find(&expiredTokens)
 	for _, token := range expiredTokens {
 		t.DeleteToken(token.Token)

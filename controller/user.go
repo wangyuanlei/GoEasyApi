@@ -3,6 +3,7 @@ package controller
 import (
 	"GoEasyApi/helper"
 	"GoEasyApi/model"
+	"GoEasyApi/structs"
 	"math"
 	"strconv"
 
@@ -14,12 +15,7 @@ var TokenModel = model.Token{}
 
 // 用户信息注册
 func UserRegister(ctx *gin.Context) {
-	var params struct {
-		Name     string `json:"name"`
-		Account  string `json:"account"`
-		Password string `json:"password"`
-		DeptId   string `json:"deptId"`
-	}
+	var params structs.RegisterParams
 
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
@@ -37,10 +33,7 @@ func UserRegister(ctx *gin.Context) {
 
 // 用户登录
 func UserLogin(ctx *gin.Context) {
-	var params struct {
-		Account  string `json:"account"`
-		Password string `json:"password"`
-	}
+	var params structs.UserLoginParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
 		return
@@ -87,11 +80,7 @@ func GetUserInfoByMe(ctx *gin.Context) {
 
 // 修改用户信息
 func ChangeUserInfo(ctx *gin.Context) {
-	var params struct {
-		UserId string `json:"user_id"`
-		Name   string `json:"name"`
-		DeptId string `json:"dept_id"`
-	}
+	var params structs.UpdateUserParams
 
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
@@ -109,11 +98,7 @@ func ChangeUserInfo(ctx *gin.Context) {
 
 // 修改密码
 func ChangeUserPassword(ctx *gin.Context) {
-	var params struct {
-		UserId      string `json:"user_id"`
-		OldPassword string `json:"old_password"`
-		NewPassword string `json:"new_password"`
-	}
+	var params structs.UpdateUserPasswordParams
 
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
@@ -136,11 +121,7 @@ func ChangeUserPassword(ctx *gin.Context) {
 
 // 管理员设置用户密码
 func AdminChangeUserPassord(ctx *gin.Context) {
-	var params struct {
-		UserId   string `json:"user_id"`
-		Password string `json:"password"`
-	}
-
+	var params structs.SetUserPasswordParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
 		return

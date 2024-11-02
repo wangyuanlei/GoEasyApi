@@ -3,6 +3,7 @@ package controller
 import (
 	"GoEasyApi/helper"
 	"GoEasyApi/model"
+	"GoEasyApi/structs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,9 +18,7 @@ func GetBlackListTypeHandler(ctx *gin.Context) {
 
 // SetBlackListTypeHandler 设置黑名单类型的处理器
 func SetBlackListTypeHandler(ctx *gin.Context) {
-	var param struct {
-		BlackListType string `json:"blackListType"`
-	}
+	var param structs.BlackListTypeParams
 
 	if err := ctx.ShouldBindJSON(&param); err != nil {
 		helper.ApiError(ctx, 601, "无效的数据", nil)
@@ -40,11 +39,7 @@ func SetBlackListTypeHandler(ctx *gin.Context) {
 
 // SetSuperAdminPasswordHandler 设置超级管理员密码的处理器
 func SetSuperAdminPasswordHandler(ctx *gin.Context) {
-	var passwordData struct {
-		OldPassword string `json:"oldPass"`
-		NewPassword string `json:"newPass"`
-	}
-
+	var passwordData structs.AdminPasswordParams
 	if err := ctx.ShouldBindJSON(&passwordData); err != nil {
 		helper.ApiError(ctx, 601, "无效的数据", nil)
 		return

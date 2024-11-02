@@ -19,6 +19,12 @@ func init() {
 
 func main() {
 	ginServer := gin.Default()
+	// 自定义请求头中设置的用户的真实Ip地址
+	// ginServer.TrustedPlatform = "Client-IP"
+	// err := ginServer.SetTrustedProxies([]string{"192.168.1.1", "10.0.0.1", "127.0.0.1"})
+	// if err != nil {
+	// 	log.Fatal("设置信任的代理失败")
+	// }
 	ginServer.StaticFS("/static", http.Dir("./static")) //加载静态文件
 	ginServer.StaticFile("/favicon.ico", "./static/favicon.ico")
 

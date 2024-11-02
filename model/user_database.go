@@ -2,8 +2,8 @@ package model
 
 import (
 	"GoEasyApi/cron"
-	"GoEasyApi/database"
 	"GoEasyApi/helper"
+	"GoEasyApi/structs"
 
 	"github.com/google/uuid"
 )
@@ -11,8 +11,8 @@ import (
 type DataBase struct{}
 
 // 获得数据库配置信息
-func (a *DataBase) GetUserDBConf() (database.Database, error) {
-	var condfig database.Database
+func (a *DataBase) GetUserDBConf() (structs.Database, error) {
+	var condfig structs.Database
 	err := DB.First(&condfig).Error
 	return condfig, err
 }

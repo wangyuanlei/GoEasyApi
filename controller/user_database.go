@@ -3,6 +3,7 @@ package controller
 import (
 	"GoEasyApi/helper"
 	"GoEasyApi/model"
+	"GoEasyApi/structs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,12 +23,7 @@ func GetUserDBConf(ctx *gin.Context) {
 
 // 保存数据库配置
 func SaveUserDBConf(ctx *gin.Context) {
-	var params struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		OrmType     string `json:"orm_type"`
-		Dns         string `json:"dns"`
-	}
+	var params structs.CreateDatabaseParams
 
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "请求数据格式错误", nil)

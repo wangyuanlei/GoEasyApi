@@ -2,8 +2,8 @@ package model
 
 import (
 	"GoEasyApi/cron"
-	"GoEasyApi/database"
 	"GoEasyApi/helper"
+	"GoEasyApi/structs"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,13 +13,13 @@ type User struct{}
 
 // RegisterUser 注册新用户
 func (u *User) RegisterUser(name string, account string, password string, deptId string) error {
-	var existingUser database.User
+	var existingUser structs.User
 	if err := DB.Where("account = ?", account).First(&existingUser).Error; err == nil {
 		return cron.CreateCustomError(601, "账号已存在")
 	}
 
 	userId := uuid.New().String()
-	var existingUser2 database.User
+	var existingUser2 structs.User
 	if err := DB.Where("user_id = ?", userId).First(&existingUser2).Error; err == nil {
 		return cron.CreateCustomError(601, "用户ID已存在")
 	}
@@ -29,7 +29,7 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 	// 生成密码
 	hashedPassword := helper.DoubleHashPassword(password, salt)
 
-	return DB.Create(&database.User{
+	return DB.Create(&structs.User{
 		UserId:       userId,
 		Name:         name,
 		Account:      account,
@@ -42,8 +42,8 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 }
 
 // 用户登录
-func (u *User) Login(account string, password string) (*database.User, error) {
-	var user database.User
+func (u *User) Login(account string, password string) (*structs.User, error) {
+	var user structs.User
 	if err := DB.Where("account = ?", account).First(&user).Error; err != nil {
 		return nil, cron.CreateCustomError(602, "用户不存在")
 	}
@@ -61,11 +61,11 @@ func (u *User) Login(account string, password string) (*database.User, error) {
 
 // ChangeInfo 更新用户信息
 func (u *User) ChangeInfo(userId string, name string, deptId string) error {
-	var user database.User
+	var user structs.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return cron.CreateCustomError(602, "用户信息不存在")
 	}
-	return DB.Model(&user).Updates(database.User{
+	return DB.Model(&user).Updates(structs.User{
 		Name:   name,
 		DeptId: deptId,
 	}).Error
@@ -73,7 +73,7 @@ func (u *User) ChangeInfo(userId string, name string, deptId string) error {
 
 // UpdateUserPassword 更新用户密码
 func (u *User) ChangePassword(userId string, oldPassword string, newPassword string) error {
-	var user database.User
+	var user structs.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return cron.CreateCustomError(602, "用户信息不存在")
 	}
@@ -88,7 +88,7 @@ func (u *User) ChangePassword(userId string, oldPassword string, newPassword str
 
 // UpdateUserPassword 更新用户密码
 func (u *User) AdminChangePassword(userId string, password string) error {
-	var user database.User
+	var user structs.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return cron.CreateCustomError(602, "用户信息不存在")
 	}
@@ -103,10 +103,10 @@ func (u *User) SetUserValidity(userId string, isValid bool) error {
 }
 
 // GetCurrentUserInfo 获取当前用户信息
-func (u *User) GetCurrentUserInfo(userId string) (database.User, error) {
-	var user database.User
+func (u *User) GetCurrentUserInfo(userId string) (structs.User, error) {
+	var user structs.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
-		return database.User{}, err
+		return structs.User{}, err
 	}
 
 	//密码和加密salt 信息 不能输出到前台
@@ -116,8 +116,8 @@ func (u *User) GetCurrentUserInfo(userId string) (database.User, error) {
 }
 
 // GetUserList 获取用户列表带分页
-func (u *User) GetUserList(page int, pageSize int, deptId string, name string, isValid int) ([]database.User, int64, error) {
-	var users []database.User
+func (u *User) GetUserList(page int, pageSize int, deptId string, name string, isValid int) ([]structs.User, int64, error) {
+	var users []structs.User
 	var total int64
 	query := DB
 	if deptId != "" {

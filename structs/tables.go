@@ -27,8 +27,8 @@ type Database struct {
 
 //接口信息数据结构
 type Interface struct {
-	InterfaceId            string `gorm:"type:varchar(32);primary_key"` // 接口编号
-	InterfaceName          string `gorm:"type:varchar(50)"`             // 接口名称
+	Id                     string `gorm:"type:varchar(32);primary_key"` // 接口编号
+	Name                   string `gorm:"type:varchar(50)"`             // 接口名称
 	Description            string `gorm:"type:text"`                    // 接口描述
 	DatabaseId             string `gorm:"type:varchar(32)"`             // 数据库源id
 	Path                   string `gorm:"type:varchar(255)"`            // 接口路径
@@ -42,6 +42,7 @@ type Interface struct {
 	TokenValidationEnabled int    `gorm:"type:int"`                     // 是否启用token验证
 	ReturnType             string `gorm:"type:varchar(50)"`             // 接口返回类型
 	ReturnValMode          string `gorm:"type:varchar(50)"`             // 接口返回模式
+	Params                 []Params
 }
 
 /*
@@ -55,15 +56,15 @@ Type: 定义
 	datetime 日期时间类型 YYYY-mm-dd HH:ii:ss
 */
 type Params struct {
-	ParamsId    string `gorm:"type:varchar(32);primary_key"` // 接口编号
-	InterfaceId string `gorm:"type:varchar(32)"`             // 接口编号
-	Name        string `gorm:"type:varchar(50)"`             // 参数名称
-	Type        string `gorm:"type:varchar(20)"`             // 参数类型 比如 string/int/float/bool/date/datetime
-	Description string `gorm:"type:text"`                    // 参数描述
-	Required    int    `gorm:"type:int"`                     // 是否必传
-	Default     string `gorm:"type:text"`                    // 默认值
-	Example     string `gorm:"type:text"`                    // 示例值
-	Regex       string `gorm:"type:text"`                    // 正则表达式
+	InterfaceId string    `gorm:"index"`                                // 接口编号
+	Name        string    `gorm:"type:varchar(50)"`                     // 参数名称
+	Type        string    `gorm:"type:varchar(20)"`                     // 参数类型 比如 string/int/float/bool/date/datetime
+	Description string    `gorm:"type:text"`                            // 参数描述
+	Required    int       `gorm:"type:int"`                             // 是否必传
+	Default     string    `gorm:"type:text"`                            // 默认值
+	Example     string    `gorm:"type:text"`                            // 示例值
+	Regex       string    `gorm:"type:text"`                            // 正则表达式
+	Interface   Interface `gorm:"foreignkey:InterfaceId;references:Id"` //外键约束
 }
 
 //用户数据表结构
@@ -81,6 +82,6 @@ type User struct {
 //用户token表结构
 type Token struct {
 	Token     string    `gorm:"type:varchar(100);primary_key"` // 登录验证token
-	UserId    string    `gorm:"type:varchar(32)"`              // 用户id
+	UserId    string    `gorm:"type:varchar(32);index"`        // 用户id
 	ValidTime time.Time `gorm:"type:datetime"`                 // 有效时间
 }

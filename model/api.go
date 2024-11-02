@@ -2,9 +2,9 @@ package model
 
 import (
 	"GoEasyApi/cron"
-	"GoEasyApi/database"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"GoEasyApi/structs"
 	"fmt"
 	"strconv"
 	"time"
@@ -130,7 +130,7 @@ func (m *Api) CheckUserLogin(ctx *gin.Context) error {
 }
 
 // 获得参数拼接的字符
-func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface) string {
+func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface structs.Interface) string {
 
 	var paramsText string
 	if Interface.Method == "get" {
@@ -162,7 +162,7 @@ func (m *Api) GetCacheKeyByParams(ctx *gin.Context, Interface database.Interface
 }
 
 // 验证get/post参数
-func (m *Api) CheckParams(ctx *gin.Context, Interface database.Interface) (map[string]string, error) {
+func (m *Api) CheckParams(ctx *gin.Context, Interface structs.Interface) (map[string]string, error) {
 	var paramsData = make(map[string]string)
 
 	for _, paramItem := range Interface.Params {

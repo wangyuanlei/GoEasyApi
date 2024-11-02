@@ -2,7 +2,7 @@ package model
 
 import (
 	"GoEasyApi/cron"
-	"GoEasyApi/database"
+	"GoEasyApi/structs"
 	"fmt"
 	"regexp"
 	"strings"
@@ -16,7 +16,7 @@ import (
 )
 
 type ApiModel struct {
-	Interface database.Interface
+	Interface structs.Interface
 	DBType    string
 	DB        *gorm.DB
 }
@@ -70,7 +70,7 @@ func (m *ApiModel) InitApiDB() error {
 	return nil
 }
 
-func (m *ApiModel) Run(Interface database.Interface, params map[string]string) (interface{}, error) {
+func (m *ApiModel) Run(Interface structs.Interface, params map[string]string) (interface{}, error) {
 	m.Interface = Interface
 	if m.Interface.ReturnType == "insert" {
 		return m.Insert(Interface.SqlContent, params)
