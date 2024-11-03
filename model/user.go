@@ -37,7 +37,7 @@ func (u *User) RegisterUser(name string, account string, password string, deptId
 		Salt:         salt,
 		DeptId:       deptId,
 		RegisterTime: time.Now(),
-		IsValid:      1,
+		IsValid:      2,
 	}).Error
 }
 
@@ -60,14 +60,20 @@ func (u *User) Login(account string, password string) (*structs.User, error) {
 }
 
 // ChangeInfo 更新用户信息
-func (u *User) ChangeInfo(userId string, name string, deptId string) error {
+func (u *User) ChangeInfo(userId string, name string, deptId string, isValid int) error {
 	var user structs.User
 	if err := DB.First(&user, "user_id = ?", userId).Error; err != nil {
 		return cron.CreateCustomError(602, "用户信息不存在")
 	}
+
+	if isValid != 1 && isValid != 2 {
+		return cron.CreateCustomError(602, "无效参数")
+	}
+
 	return DB.Model(&user).Updates(structs.User{
-		Name:   name,
-		DeptId: deptId,
+		Name:    name,
+		DeptId:  deptId,
+		IsValid: isValid,
 	}).Error
 }
 
@@ -98,7 +104,11 @@ func (u *User) AdminChangePassword(userId string, password string) error {
 }
 
 // SetUserValidity 设置用户有效性
-func (u *User) SetUserValidity(userId string, isValid bool) error {
+func (u *User) SetUserValidity(userId string, isValid int) error {
+	if isValid != 1 && isValid != 2 {
+		return cron.CreateCustomError(602, "无效参数")
+	}
+
 	return DB.Model(&User{}).Where("user_id = ?", userId).Update("is_valid", isValid).Error
 }
 

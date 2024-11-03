@@ -87,7 +87,25 @@ func ChangeUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	err := UserModel.ChangeInfo(params.UserId, params.Name, params.DeptId)
+	err := UserModel.ChangeInfo(params.UserId, params.Name, params.DeptId, params.IsValid)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, true)
+}
+
+// 设置用户是否有效
+func SetUserIsValid(ctx *gin.Context) {
+	var params structs.SetUserIsValidParams
+
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		helper.ApiError(ctx, 601, "请求数据格式错误", nil)
+		return
+	}
+
+	err := UserModel.SetUserValidity(params.UserId, params.IsValid)
 	if err != nil {
 		ShowModelError(ctx, err)
 		return

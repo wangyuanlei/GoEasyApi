@@ -4,6 +4,7 @@ import (
 	"GoEasyApi/cron"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
+	"fmt"
 )
 
 type Config struct{}
@@ -63,6 +64,9 @@ func (c *Config) SetSuperAdminPassword(oldpass string, newpass string) error {
 		return err
 	}
 
+	fmt.Println("oldpass:", oldpass)
+	fmt.Println("oldpass:", helper.HashPassword(oldpass))
+	fmt.Println("password:", password)
 	// 验证旧密码是否正确
 	if helper.HashPassword(oldpass) != password {
 		return cron.CreateCustomError(500, "旧密码错误")

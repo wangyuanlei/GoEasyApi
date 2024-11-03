@@ -1,5 +1,5 @@
 database: db.sql
-whitelist_config: 1
+whitelist_config: 0
 bind: 0.0.0.0:8008
 user:
   username: admin

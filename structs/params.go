@@ -30,8 +30,8 @@ type WhiteListIpParams struct {
 
 //管理员密码修改结构
 type AdminPasswordParams struct {
-	OldPassword string `json:"old_password"`
-	NewPassword string `json:"new_password"`
+	OldPassword string `json:"old_pass"`
+	NewPassword string `json:"new_pass"`
 }
 
 //数据库创建结构
@@ -58,9 +58,10 @@ type UserLoginParams struct {
 
 //用户信息修改结构
 type UpdateUserParams struct {
-	UserId string `json:"user_id"`
-	Name   string `json:"name"`
-	DeptId string `json:"dept_id"`
+	UserId  string `json:"user_id"`
+	Name    string `json:"name"`
+	DeptId  string `json:"dept_id"`
+	IsValid int    `json:"is_valid"`
 }
 
 //用户信息修改密码结构
@@ -68,6 +69,12 @@ type UpdateUserPasswordParams struct {
 	UserId      string `json:"user_id"`
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
+}
+
+//管理员设置用户是否有效
+type SetUserIsValidParams struct {
+	UserId  string `json:"user_id"`
+	IsValid int    `json:"is_valid"`
 }
 
 //管理员设置用户密码结构

@@ -27,7 +27,7 @@ func (m *WhiteList) AddWhiteList(ip string, description string) error {
 	if existingData.IP == "" {
 		return DB.Create(&structs.WhiteList{IP: ip, Description: description}).Error
 	} else {
-		return DB.Model(&existingData).Update("description", description).Error
+		return DB.Model(&existingData).Where("ip = ?", ip).Update("description", description).Error
 	}
 }
 
@@ -56,7 +56,7 @@ func (m *WhiteList) AddBlackList(ip string, description string) error {
 	if existingData.IP == "" {
 		return DB.Create(&structs.BlackList{IP: ip, Description: description}).Error
 	} else {
-		return DB.Model(&existingData).Update("description", description).Error
+		return DB.Model(&existingData).Where("ip = ?", ip).Update("description", description).Error
 	}
 }
 
