@@ -123,13 +123,21 @@ func (m *Interface) UpdateInterface(info structs.Interface) error {
 		}
 	}
 
-	//如果清空一次参数表
+	if err := DB.Model(&structs.Interface{}).Where("id = ?", info.Id).Updates(info).Error; err != nil {
+		return err
+	}
+	//保存Params信息
+	//清空一次参数表
 	if err := DB.Where("interface_id = ?", info.Id).Delete(&structs.Params{}).Error; err != nil {
 		return err
 	}
-
-	if err := DB.Model(&structs.Interface{}).Updates(info).Error; err != nil {
-		return err
+	if len(info.Params) > 0 {
+		for _, param := range info.Params {
+			param.InterfaceId = info.Id
+			if err := DB.Create(&param).Error; err != nil {
+				return err
+			}
+		}
 	}
 
 	//更新缓存
@@ -187,7 +195,7 @@ func (m *Interface) GetInfo(InterfaceId string) (structs.Interface, error) {
 		3. 同时输出 Params 详细内容
 	*/
 	var interfaceInfo structs.Interface
-	if err := DB.Model(&structs.Interface{}).Where("interface_id = ?", InterfaceId).First(&interfaceInfo).Error; err != nil {
+	if err := DB.Model(&structs.Interface{}).Where("id = ?", InterfaceId).First(&interfaceInfo).Error; err != nil {
 		return structs.Interface{}, cron.CreateCustomError(601, "接口不存在")
 	}
 

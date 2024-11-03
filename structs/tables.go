@@ -27,23 +27,35 @@ type Database struct {
 
 //接口信息数据结构
 type Interface struct {
-	Id                     string `gorm:"type:varchar(32);primary_key"` // 接口编号
-	Name                   string `gorm:"type:varchar(50)"`             // 接口名称
-	Description            string `gorm:"type:text"`                    // 接口描述
-	DatabaseId             string `gorm:"type:varchar(32)"`             // 数据库源id
-	Path                   string `gorm:"type:varchar(255)"`            // 接口路径
-	Method                 string `gorm:"type:varchar(10)"`             // 接口方法
-	CacheEnabled           int    `gorm:"type:int"`                     // 是否启用接口缓存
-	CacheTime              int    `gorm:"type:int"`                     // 接口缓存时间
-	RateLimitEnabled       int    `gorm:"type:int"`                     // 是否启用接口限流
-	RateLimitCount         int    `gorm:"type:int"`                     // 接口限流次数
-	RateLimitTime          int    `gorm:"type:int"`                     // 接口限流时间
-	SqlContent             string `gorm:"type:text"`                    // 接口sql语句
-	TokenValidationEnabled int    `gorm:"type:int"`                     // 是否启用token验证
-	ReturnType             string `gorm:"type:varchar(50)"`             // 接口返回类型
-	ReturnValMode          string `gorm:"type:varchar(50)"`             // 接口返回模式
-	Params                 []Params
+	Id                     string   `gorm:"type:varchar(32);primary_key"` // 接口编号
+	Name                   string   `gorm:"type:varchar(50)"`             // 接口名称
+	Description            string   `gorm:"type:text"`                    // 接口描述
+	DatabaseId             string   `gorm:"type:varchar(32)"`             // 数据库源id
+	Path                   string   `gorm:"type:varchar(255)"`            // 接口路径
+	Method                 string   `gorm:"type:varchar(10)"`             // 接口方法
+	CacheEnabled           int      `gorm:"type:int"`                     // 是否启用接口缓存
+	CacheTime              int      `gorm:"type:int"`                     // 接口缓存时间
+	RateLimitEnabled       int      `gorm:"type:int"`                     // 是否启用接口限流
+	RateLimitCount         int      `gorm:"type:int"`                     // 接口限流次数
+	RateLimitTime          int      `gorm:"type:int"`                     // 接口限流时间
+	SqlContent             string   `gorm:"type:text"`                    // 接口sql语句
+	TokenValidationEnabled int      `gorm:"type:int"`                     // 是否启用token验证
+	ReturnType             string   `gorm:"type:varchar(50)"`             // 接口返回类型
+	ReturnValMode          string   `gorm:"type:varchar(50)"`             // 接口返回模式
+	Params                 []Params `gorm:"foreignkey:InterfaceId"`
 }
+
+/*
+1. 数据添加类型端口: ReturnType:insert
+   1. 对于mysql 可以返回自增id, 或者uuid. 	ReturnValMode:last_id
+   2. 对于没有自增的id 可以指定uuid.		ReturnValMode:uuid
+2. 数据修改/删除类型接口: ReturnType:update/delete
+   1. 返回 bool 类型, 或者返回 修改后的 数据. ReturnValMode:row / bool
+3. 数据单条查询接口: ReturnType:row
+   1. 返回单条数据. 列子: {"name":"张三"}
+4. 数据多条查询接口: ReturnType:list
+   1. 返回多条数据. 列子: [{"name":"张三"},{"name":"李四"}]
+*/
 
 /*
 接口参数数据结构
@@ -56,15 +68,14 @@ Type: 定义
 	datetime 日期时间类型 YYYY-mm-dd HH:ii:ss
 */
 type Params struct {
-	InterfaceId string    `gorm:"index"`                                // 接口编号
-	Name        string    `gorm:"type:varchar(50)"`                     // 参数名称
-	Type        string    `gorm:"type:varchar(20)"`                     // 参数类型 比如 string/int/float/bool/date/datetime
-	Description string    `gorm:"type:text"`                            // 参数描述
-	Required    int       `gorm:"type:int"`                             // 是否必传
-	Default     string    `gorm:"type:text"`                            // 默认值
-	Example     string    `gorm:"type:text"`                            // 示例值
-	Regex       string    `gorm:"type:text"`                            // 正则表达式
-	Interface   Interface `gorm:"foreignkey:InterfaceId;references:Id"` //外键约束
+	InterfaceId string `gorm:"index"`            // 接口编号
+	Name        string `gorm:"type:varchar(50)"` // 参数名称
+	Type        string `gorm:"type:varchar(20)"` // 参数类型 比如 string/int/float/bool/date/datetime
+	Description string `gorm:"type:text"`        // 参数描述
+	Required    int    `gorm:"type:int"`         // 是否必传
+	Default     string `gorm:"type:text"`        // 默认值
+	Example     string `gorm:"type:text"`        // 示例值
+	Regex       string `gorm:"type:text"`        // 正则表达式
 }
 
 //用户数据表结构
