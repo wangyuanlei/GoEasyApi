@@ -4,7 +4,6 @@ import (
 	"GoEasyApi/cron"
 	"GoEasyApi/helper"
 	"GoEasyApi/libraries"
-	"fmt"
 )
 
 type Config struct{}
@@ -39,6 +38,10 @@ func (c *Config) GetBlackListType() int {
 //	调用libraries.SaveWhitelistConfig函数，将传入的黑名单类型保存到配置文件中
 //	如果保存成功，则返回nil；否则返回错误信息
 func (c *Config) SetBlackListType(blackListType int) error {
+	if blackListType != 0 && blackListType != 1 && blackListType != 2 {
+		return cron.CreateCustomError(500, "名单类型错误 1 -黑名单 2-白名单 0-不使用")
+	}
+
 	err := libraries.SaveWhitelistConfig(blackListType)
 	if err != nil {
 		return err
@@ -64,9 +67,6 @@ func (c *Config) SetSuperAdminPassword(oldpass string, newpass string) error {
 		return err
 	}
 
-	fmt.Println("oldpass:", oldpass)
-	fmt.Println("oldpass:", helper.HashPassword(oldpass))
-	fmt.Println("password:", password)
 	// 验证旧密码是否正确
 	if helper.HashPassword(oldpass) != password {
 		return cron.CreateCustomError(500, "旧密码错误")

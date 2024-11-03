@@ -8,7 +8,7 @@ type AdminLoginParams struct {
 
 //黑名单类型结构
 type BlackListTypeParams struct {
-	BlackListType string `json:"black_list_type"`
+	BlackListType string `json:"list_type"`
 }
 
 //黑名单ip表结构

@@ -4,19 +4,20 @@ import (
 	"GoEasyApi/helper"
 	"GoEasyApi/model"
 	"GoEasyApi/structs"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// GetBlackListTypeHandler 获取黑名单类型的处理器
+// GetBlackListTypeHandler 获取黑名单类型
 func GetBlackListTypeHandler(ctx *gin.Context) {
 	config := model.Config{}
 	blackListType := config.GetBlackListType()
 	helper.ApiSuccess(ctx, blackListType)
 }
 
-// SetBlackListTypeHandler 设置黑名单类型的处理器
+// SetBlackListTypeHandler 设置黑名单类型
 func SetBlackListTypeHandler(ctx *gin.Context) {
 	var param structs.BlackListTypeParams
 
@@ -28,6 +29,8 @@ func SetBlackListTypeHandler(ctx *gin.Context) {
 	blackListType, _ := strconv.Atoi(param.BlackListType)
 	config := model.Config{}
 
+	fmt.Println("blackListType", blackListType)
+
 	_err := config.SetBlackListType(blackListType)
 	if _err != nil {
 		ShowModelError(ctx, _err)
@@ -37,7 +40,7 @@ func SetBlackListTypeHandler(ctx *gin.Context) {
 	helper.ApiSuccess(ctx, true)
 }
 
-// SetSuperAdminPasswordHandler 设置超级管理员密码的处理器
+// SetSuperAdminPasswordHandler 设置超级管理员密码
 func SetSuperAdminPasswordHandler(ctx *gin.Context) {
 	var passwordData structs.AdminPasswordParams
 	if err := ctx.ShouldBindJSON(&passwordData); err != nil {
