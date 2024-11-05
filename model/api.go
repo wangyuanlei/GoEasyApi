@@ -24,6 +24,11 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
+	//判断是否限流
+	if err := m.CheckRateLimit(ctx.ClientIP(), interfaceInfo); err != nil {
+		return nil, err
+	}
+
 	//判断是否使用token验证
 	if interfaceInfo.TokenValidationEnabled == 1 {
 		if err := m.CheckUserLogin(ctx); err != nil {
@@ -71,6 +76,11 @@ func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
+	//判断是否限流
+	if err := m.CheckRateLimit(ctx.ClientIP(), interfaceInfo); err != nil {
+		return nil, err
+	}
+
 	//判断是否使用token验证
 	if interfaceInfo.TokenValidationEnabled == 1 {
 		if err := m.CheckUserLogin(ctx); err != nil {
@@ -109,6 +119,28 @@ func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
 	}
 
 	return data, nil
+}
+
+// 限流验证
+func (m *Api) CheckRateLimit(ip string, interfaceInfo structs.Interface) error {
+	if interfaceInfo.RateLimitEnabled == 1 {
+		cacheKey := "RateLimit_" + ip + "_" + interfaceInfo.Path + "_" + interfaceInfo.Method
+		// 获取当前请求次数
+		count, _ := libraries.GetCache(cacheKey)
+		if count == nil {
+			count = 0
+		}
+
+		// 检查是否超过限流次数
+		if count.(int) >= interfaceInfo.RateLimitCount {
+			return cron.CreateCustomError(429, "请求次数超过限制，请稍后再试")
+		}
+
+		// 更新请求次数
+		libraries.AddCache(cacheKey, count.(int)+1, time.Duration(interfaceInfo.RateLimitTime)*time.Second)
+	}
+
+	return nil
 }
 
 func (m *Api) CheckUserLogin(ctx *gin.Context) error {

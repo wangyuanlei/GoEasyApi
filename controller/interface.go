@@ -37,6 +37,7 @@ func UpdateInterface(ctx *gin.Context) {
 	}
 
 	params.DatabaseId = "none"
+
 	err := InterfaceModel.UpdateInterface(params)
 	if err != nil {
 		ShowModelError(ctx, err)

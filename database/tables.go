@@ -27,7 +27,7 @@ type Database struct {
 	DatabaseId   string `gorm:"type:varchar(32);primary_key"` // 数据库源id uuid编号
 	DatabaseName string `gorm:"type:varchar(32)"`             // 数据库源名称
 	Description  string `gorm:"type:text"`                    // 数据源描述
-	OrmType      string `gorm:"type:varchar(20)"`             // 数据库连接类型 mysql/postgresql/oracle/sqlserver/sqlite
+	OrmType      string `gorm:"type:varchar(20)"`             // 数据库连接类型 mysql/postgresql/sqlserver/sqlite
 	Dns          string `gorm:"type:varchar(255)"`            // 数据库地址
 }
 

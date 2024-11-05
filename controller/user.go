@@ -44,7 +44,7 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 
-	if user.IsValid != 1 {
+	if user.IsValid != 2 {
 		helper.ApiError(ctx, 602, "用户信息无效", nil)
 		return
 	}

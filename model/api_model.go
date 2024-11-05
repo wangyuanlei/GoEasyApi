@@ -191,14 +191,10 @@ func (m *ApiModel) HandleSql(sql_content string, params map[string]string) (newS
 		if params[key[1]] == "" {
 			return "", []interface{}{}, cron.CreateCustomError(602, "参数错误")
 		}
-
-		paramValues = append(paramValues, params[key[1]])
-
-		newSql = strings.Replace(newSql, "{{"+key[1]+"}}", "?", -1)
+		_key := fmt.Sprintf("{{%s}}", key[1])
+		newSql = strings.Replace(newSql, _key, "?", -1)
 	}
 
 	fmt.Println("newSql", newSql)
-	fmt.Println(paramValues)
-
 	return newSql, paramValues, nil
 }
