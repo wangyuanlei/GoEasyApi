@@ -18,6 +18,12 @@ var InterfaceModel = Interface{}
 var Api_Model = ApiModel{}
 
 func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
+
+	//判断名单
+	if err := m.CheckIp(ctx); err != nil {
+		return nil, err
+	}
+
 	//获得接口信息
 	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path, "get")
 	if err != nil {
@@ -70,6 +76,11 @@ func (m *Api) Get(ctx *gin.Context) (interface{}, error) {
 }
 
 func (m *Api) Post(ctx *gin.Context) (interface{}, error) {
+	//判断名单
+	if err := m.CheckIp(ctx); err != nil {
+		return nil, err
+	}
+
 	//获得接口信息
 	interfaceInfo, err := InterfaceModel.GetInfoByPath(ctx.Request.URL.Path, "post")
 	if err != nil {
@@ -254,4 +265,51 @@ func (m *Api) CheckParams(ctx *gin.Context, Interface structs.Interface) (map[st
 		paramsData[paramItem.Name] = _param
 	}
 	return paramsData, nil
+}
+
+// 判断是否是白名单或者黑名单内的ip
+func (m *Api) CheckIp(ctx *gin.Context) error {
+	//获得名单类型
+	var ConfigModel = Config{}
+	var WhiteListModel = WhiteList{}
+	ListType := ConfigModel.GetBlackListType()
+
+	//获得当前ip
+	var CurrentIp = ctx.ClientIP()
+
+	if ListType == 0 {
+		return nil
+	} else if ListType == 1 {
+		//黑名单
+
+		BlackList, err := WhiteListModel.GetAllBlackList()
+		if err != nil {
+			return cron.CreateCustomError(500, "获取黑名单失败")
+		}
+
+		for _, ip := range BlackList {
+			if ip.IP == CurrentIp {
+				return cron.CreateCustomError(500, "当前ip已被禁止访问")
+			}
+		}
+
+	} else if ListType == 2 {
+		//白名单
+		var WhiteListModel = WhiteList{}
+
+		WhiteList, err := WhiteListModel.GetAllWhiteList()
+		if err != nil {
+			return cron.CreateCustomError(500, "获取白名单失败")
+		}
+
+		for _, ip := range WhiteList {
+			if ip.IP == CurrentIp {
+				return nil
+			}
+		}
+
+		return cron.CreateCustomError(500, "当前ip不允许访问")
+	}
+
+	return nil
 }
