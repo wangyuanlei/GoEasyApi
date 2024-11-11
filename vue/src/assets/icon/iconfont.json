@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "29546406",
+      "name": "删除",
+      "font_class": "htmal5icon17",
+      "unicode": "e514",
+      "unicode_decimal": 58644
+    },
+    {
+      "icon_id": "36075100",
+      "name": "修改",
+      "font_class": "xiugai",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    }
+  ]
+}
