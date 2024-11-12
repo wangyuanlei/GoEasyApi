@@ -2,8 +2,8 @@
     <div class="search-user-table">
       <div class="search-user-top">
         <div class="search-left">
-          <el-input v-model="input" style="width: 240px" ref="inputRef" size="large" placeholder="用户姓名 / 登陆账号" clearable @blur="handleSearch" @clear="handleClear"/>
-          <el-button type="primary" @click="getTableData" :icon="Refresh" circle />
+          <el-input v-model="input" style="width: 240px" ref="inputRef" size="large" placeholder="用户姓名 / 登陆账号" clearable @blur="handleSearch" @clear="handleClear" @keyup.enter="handleSearch"/>
+          <el-button type="primary" @click="getTableData" :icon="Search" circle />
         </div>
         <div class="search-right">
           <el-button type="primary" @click="dialogFormVisible = true">+ 添加新用户</el-button>
@@ -92,7 +92,7 @@
 import { ref, watch ,onMounted} from 'vue'
 import UserManage from "@/api/user";
 import { ElMessageBox,ElMessage } from 'element-plus'
-import { Delete,Edit,Refresh,RefreshRight} from '@element-plus/icons-vue';
+import { Delete,Edit,Refresh,RefreshRight,Search} from '@element-plus/icons-vue';
 // 模糊搜索框
 const input = ref('')
 const inputRef =ref(null);
@@ -145,7 +145,7 @@ watch([currentPage, pageSize], () => {
 const getTableData = () => {
   loading.value = true; // 开始加载
   UserManage.getUesrList(hasToken, filterData.value).then(res => {
-    console.log('res', res.data.list);
+    // console.log('res', res.data.list);
     tableData.value = res.data.list;
     total.value = res.data.total;
   })
@@ -218,7 +218,7 @@ const handleSave = () => {
   formRef.value.validate((valid: boolean) => {
     if (valid) {
       if (isEdit.value && currentUserId.value) {
-        console.log('form.value', form.value);
+        // console.log('form.value', form.value);
         
         UserManage.updateUser(hasToken, currentUserId.value, form.value).then(res => {
           ElMessage.success('修改成功');
@@ -231,7 +231,7 @@ const handleSave = () => {
       }else{
         //新增保存   
         UserManage.createUser(hasToken, form.value).then(res => {
-          console.log('res', res);
+          // console.log('res', res);
           dialogFormVisible.value = false;
           ElMessage.success('用户添加成功');
           resetForm();
@@ -250,7 +250,7 @@ const currentUserId = ref<string | null>(null); // 当前编辑的用户ID
 const EditRow = (row: any) => {
   dialogFormVisible.value = true;
   isEdit.value = true;
-  dialogTitle.value = '用户详情';
+  dialogTitle.value = '编辑用户';
   currentUserId.value = row.UserId.toString();
   const str = row.UserId.toString();
   UserManage.getUser(hasToken, str).then(res => {
