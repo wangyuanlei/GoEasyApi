@@ -54,11 +54,11 @@ func (t *Token) GetTokenInfo(token string) (string, error) {
 	var dbToken structs.Token
 	err := DB.Where("token = ?", token).First(&dbToken).Error
 	if err != nil {
-		return "", err
+		return "", cron.CreateCustomError(500, "token 验证失败")
 	}
 
 	if dbToken.ValidTime.Before(time.Now()) {
-		return "", cron.CreateCustomError(601, "token 已经过期")
+		return "", cron.CreateCustomError(500, "token 已经过期")
 	}
 
 	return dbToken.UserId, nil
