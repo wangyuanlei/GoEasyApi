@@ -2,7 +2,7 @@
 import { ref,onMounted,watch } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
-import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElAvatar,ElMessage } from 'element-plus';
+import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElAvatar,ElMessage,ElMessageBox } from 'element-plus';
 import HomeApi from "@/api/home";
 
 const activeOption = ref<string | null>(null);
@@ -64,8 +64,14 @@ const submitForm = () => {
   }
 };
 const logout = () => {
-  localStorage.removeItem('accessToken');
-  router.push('/');
+  ElMessageBox.confirm('确定要退出登录吗？', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    localStorage.removeItem('accessToken');
+    router.push('/');
+  }); 
 };
 // 在组件挂载时选中第一个选项
 onMounted(() => {
