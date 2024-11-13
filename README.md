@@ -33,6 +33,8 @@ GoEasyAPI是一套基于go语言开发的自动化服务端API生成平台, 用�
     main.go         //启动文件
     config.yaml       //配置文件
     db.sql           //数据库文件
+    GoEasyApi       linux下编译好的服务端
+    GoEasyApi.exe   windows下编译好的服务端
 
 ## Installation
 1. 下载git仓库, 写明git地址, 以及备用地址
