@@ -38,10 +38,16 @@ func (m *Interface) InterfaceVerify(info structs.Interface) error {
 		return err
 	}
 
-	if info.ReturnValMode != "" { //如果不为空, 值只能是 last_id|row
-		if err := helper.CheckParamItem(info.ReturnValMode, "last_id|row"); err != nil {
+	if info.ReturnType == "insert" {
+		if err := helper.CheckParamItem(info.ReturnValMode, "last_id|bool"); err != nil {
 			return err
 		}
+	} else if info.ReturnType == "update" {
+		if err := helper.CheckParamItem(info.ReturnValMode, "bool|row"); err != nil {
+			return err
+		}
+	} else {
+		info.ReturnValMode = ""
 	}
 
 	return nil
