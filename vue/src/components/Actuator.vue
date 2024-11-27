@@ -278,7 +278,23 @@ interface RequestParam {
     newRow: boolean;
 }
 
-const form = ref({
+interface formType {
+    Name: string;
+    Path: string;
+    Description: string;
+    Method: string;
+    CacheEnabled: number;
+    RateLimitEnabled: number;
+    RateLimitCount: number | string;
+    CacheTime: string | number;
+    RateLimitTime: string | number;
+    TokenValidationEnabled: number;
+    ReturnValMode: string;
+    ReturnType: string;
+    SqlContent: string;
+    Params: RequestParam[];
+}
+const form = ref<formType>({
     Name: '',
     Path: '',
     Description: '',
@@ -410,6 +426,15 @@ const save = () => {
         delete formData.cachetime;
     }
 
+    if (formData.ratelimittime) {
+        formData.ratelimittime = Number(formData.ratelimittime);
+    }
+    if (formData.ratelimitcount) {
+        formData.ratelimitcount = Number(formData.ratelimitcount);
+    }
+    if (formData.cachetime) {
+        formData.cachetime=Number(formData.cachetime);
+    }
     if (formData.ratelimitenabled === 2) {
         delete formData.ratelimitcount;
         delete formData.ratelimittime;

@@ -63,16 +63,18 @@ class AuthAPI {
 	static updateUser(AuthorizeCode: string,id:string,data:any) {
 		const formData = new FormData();
 		console.log('data',data);
-		
-		formData.append("name", data.name);
-		formData.append("dept_id",data.deptId);
-		formData.append("is_valid",data.isValid);
-		formData.append("user_id",id);
+		data.user_id=id;
+		data.is_valid=Number(data.isValid);
+		delete data.isValid;
+		// formData.append("name", data.name);
+		// formData.append("dept_id",data.deptId);
+		// formData.append("is_valid",Number(data.isValid));
+		// formData.append("user_id",id);
 
 		return request<any>({
 			url: "/api/manger/set_user_info",
 			method: "post",
-			data: formData,
+			data: data,
 			headers: {
 				token: AuthorizeCode,
 			  },

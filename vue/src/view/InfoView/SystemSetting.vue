@@ -236,6 +236,14 @@ const blackSave =()=>{
   });
 }
 const whiteSave =()=>{
+    // loading.value = true;
+    if(!form.value.ip ||!form.value.description){
+        ElMessage({
+          message: '请输入完整信息',
+          type: 'warning'
+        })
+        return
+    }
     sysSet.addWhite(hasToken,form.value).then(res => {
         ElMessage({
           message: '添加成功',

@@ -218,7 +218,7 @@ const handleSave = () => {
   formRef.value.validate((valid: boolean) => {
     if (valid) {
       if (isEdit.value && currentUserId.value) {
-        // console.log('form.value', form.value);
+        console.log('form.value', form.value);
         
         UserManage.updateUser(hasToken, currentUserId.value, form.value).then(res => {
           ElMessage.success('修改成功');

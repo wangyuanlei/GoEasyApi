@@ -71,7 +71,7 @@ class AuthAPI {
 		  data: formData,
 		  headers: {
 			token: AuthorizeCode,
-			"Content-Type":"multipart/form-data"
+			// "Content-Type":"multipart/form-data"
 		  },
 		});
 	  }
