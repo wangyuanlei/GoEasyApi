@@ -11,13 +11,19 @@
   "dependencies": {
     "@types/axios": "^0.9.36",
     "axios": "^1.7.7",
+    "codemirror": "^5.65.18",
+    "codemirror-editor-vue3": "^2.8.0",
     "element-plus": "^2.8.6",
+    "monaco-editor": "^0.52.0",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^4.1.2",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vue": "^3.5.12",
+    "vue-monaco-editor": "^0.0.19",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@types/codemirror": "^5.60.15",
     "@types/es6-promise": "^0.0.33",
     "@types/node": "^22.9.0",
     "@vitejs/plugin-vue": "^5.1.4",

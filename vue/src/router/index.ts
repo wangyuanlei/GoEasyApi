@@ -33,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
          name:'SystemSetting',
          component:()=>import('@/view/InfoView/SystemSetting.vue')
        },
+       {
+        path:'/Home/SetApi',
+        name:'SetApi',
+        component:()=>import('@/view/InfoView/SetApi.vue')
+      },
     ]
   },
 ]

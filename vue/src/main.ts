@@ -4,6 +4,8 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '@/style/style.css'
 import '@/assets/icon/iconfont.css'
+import SvgIcon from '@/components/svg/svg.vue';
+import 'virtual:svg-icons-register';
 // 路由配置
 import router from './router'
 // pinia
@@ -13,4 +15,6 @@ const app = createApp(App)
 app.use(ElementPlus)
 app.use(router)
 app.use(pinia)
+app.component('svg-icon',SvgIcon)
+// app.component('svg-icon',svg)
 app.mount('#app')

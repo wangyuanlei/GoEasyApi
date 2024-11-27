@@ -1,11 +1,11 @@
 <template>
     <!-- 系统设置 -->
-    <div class="w-full h-full">
+    <div class="w-full h-full bg-gray-100">
         <div class="w-full h-full pt-10 sys-box">
             <section class="center-box rounded m-auto p-5">
                 <div class="head-title text-2xl text-center pb-6 font-light">系统设置</div>
                 <div class="dashed px-8"></div>
-                <div class="info-reply-box">
+                <div class="info-reply-box" v-loading="loading">
                     <el-scrollbar max-height="505">
                         <div class="info-reply">
                             <el-radio-group v-model="selectedListType">
@@ -281,9 +281,9 @@ const whiteSave =()=>{
     box-shadow: 0px 12px 32px 4px rgba(0, 0, 0, .04), 0px 8px 20px rgba(0, 0, 0, .08);
     padding: 20px;
 }
-.center-box:hover {
+/* .center-box:hover {
     border-color: #409EFF;
-}
+} */
 .head-title {
     color: #409EFF;
     padding: 10px 0;

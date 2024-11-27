@@ -4,7 +4,19 @@ import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue()
+    ,createSvgIconsPlugin({
+      // 指定需要缓存的图标文件夹
+      iconDirs: [path.resolve(process.cwd(), "src/assets/svgs")],
+      // 指定symbolId格式
+      // symbolId: 'icon-[name]',
+      // symbolId: 'icon-[dir]-[name]',
+      symbolId: "[name]",
+      customDomId: "turing-planet-svgs", // 避免多项目互相影响
+    })
+
+  ],
   resolve:{
     // 导入以下文件可以不用后缀名
     extensions:['.vue','.ts'],

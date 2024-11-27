@@ -30,7 +30,7 @@
                 <el-button type="primary" :icon="Edit" size="small" @click="EditRow(scope.row)" />
               </el-tooltip>
               <el-tooltip class="box-item" effect="dark" content="修改密码" placement="top">
-                <el-button type="warning" :icon="RefreshRight" size="small" style="border-radius: 0;"
+                <el-button type="warning" :icon="Setting" size="small" style="border-radius: 0;"
                   @click="changePassword(scope.row)" />
               </el-tooltip>
               <!-- <span v-if="scope.row.state * 1 === 20"> -->
@@ -92,7 +92,7 @@
 import { ref, watch ,onMounted} from 'vue'
 import UserManage from "@/api/user";
 import { ElMessageBox,ElMessage } from 'element-plus'
-import { Delete,Edit,Refresh,RefreshRight,Search} from '@element-plus/icons-vue';
+import { Delete,Edit,Setting,Search} from '@element-plus/icons-vue';
 // 模糊搜索框
 const input = ref('')
 const inputRef =ref(null);
@@ -149,9 +149,9 @@ const getTableData = () => {
     tableData.value = res.data.list;
     total.value = res.data.total;
   })
-  // .finally(() => {
-  //   loading.value = false; // 加载完成
-  // });
+  .finally(() => {
+    loading.value = false; // 加载完成
+  });
 };
 onMounted(()=>{
     getTableData();
@@ -290,6 +290,7 @@ const handleDelete = (row: any) => {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  background-color: #ebeef5;
 }
 .search-user-table /deep/ .is-leaf {
     background-color: var(--v-table-bg-color);
@@ -307,8 +308,7 @@ const handleDelete = (row: any) => {
   height: 40px;
 }
 
-.el-input,
-.el-select {
+.el-input{
   margin-right: 10px;
 }
 

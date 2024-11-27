@@ -1,6 +1,4 @@
 import request from "@/utils/request";
-import { APP_ID, APP_SECRET } from "@/enums/CacheEnum";
-import type { AuthorizeCode, TokenData, UserInfo, LoginData, UserManageList, createUserData, deleteUserData, resetUserData, setInvalidData, updateUserData } from "../auth/userList"
 
 class AuthAPI {
 	//获取用户列表

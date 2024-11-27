@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import {  User ,Lock} from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from 'element-plus';
 import AuthAPI from "@/api/login";
@@ -8,7 +9,6 @@ const router = useRouter();
 const formRef = ref<InstanceType<typeof ElForm>>();
 const accountInputRef = ref<InstanceType<typeof ElInput>>();
 const passwordInputRef = ref<InstanceType<typeof ElInput>>();
-
 const form = ref({
   account: '',
   password: ''
@@ -79,6 +79,8 @@ const handlePasswordEnter = () => {
                   placeholder="请输入账号"
                   ref="accountInputRef"
                   @keyup.enter="handleAccountEnter"
+                  :prefix-icon="User"
+                  size="large"
                 ></el-input>
               </el-form-item>
               <el-form-item label="密码:" prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]">
@@ -88,11 +90,13 @@ const handlePasswordEnter = () => {
                   show-password
                   ref="passwordInputRef"
                   @keyup.enter="handlePasswordEnter"
+                  size="large"
+                  :prefix-icon="Lock"
                 ></el-input>
               </el-form-item>
             </el-form>
             <div class="operation-area">
-              <el-button class="submit-btn" type="primary" @click="handleLogin">登录</el-button>
+              <el-button class="submit-btn" type="primary" size="large" @click="handleLogin">登录</el-button>
             </div>
           </div>
         </div>

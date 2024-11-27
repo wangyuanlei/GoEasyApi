@@ -132,7 +132,7 @@ class AuthAPI {
 	static SetType(AuthorizeCode: string, data: string) {
 		// console.log('datadata111',data);
 		const formData = new FormData();
-		formData.append("blackListType", data);
+		formData.append("list_type", data);
 		return request<any>({
 		  url: "/api/manger/list/set_type",
 		  method: "post",

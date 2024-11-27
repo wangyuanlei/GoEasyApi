@@ -4,7 +4,7 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElAvatar,ElMessage,ElMessageBox } from 'element-plus';
 import HomeApi from "@/api/home";
-
+// import SvgIcon from '@/components/svg/svg.vue';
 const activeOption = ref<string | null>(null);
 //修改密码逻辑
 const showDialog = ref(false);
@@ -55,10 +55,13 @@ const submitForm = () => {
     case 'option1':
       router.push('/Home/DataSource');
       break;
-      case 'option3':
+    case 'option2':
+      router.push('/Home/SetApi');
+      break;
+    case 'option3':
       router.push('/Home/SystemSetting');
       break;
-      case 'option4':
+    case 'option4':
         router.push('/Home/UserList');
       break;
   }
@@ -83,6 +86,8 @@ watch(route, (newRoute) => {
   
   if (newRoute.path === '/Home/DataSource') {
     activeOption.value = 'option1';
+  }else if(newRoute.path === '/Home/SetApi'){
+    activeOption.value = 'option2';
   }else if (newRoute.path === '/Home/SystemSetting') {
     activeOption.value = 'option3';
   } else if (newRoute.path === '/Home/UserList') {
@@ -99,10 +104,31 @@ watch(route, (newRoute) => {
       </div>
       <nav class="nav">
         <ul class="nav-list">
-          <li :class="{ active: activeOption === 'option1' }" class="nav-item" @click="handleNavClick('option1')">数据源</li>
-          <li :class="{ active: activeOption === 'option2' }" class="nav-item" @click="handleNavClick('option2')">应用程序接口</li>
-          <li :class="{ active: activeOption === 'option3' }" class="nav-item" @click="handleNavClick('option3')">系统设置</li>
-          <li :class="{ active: activeOption === 'option4' }" class="nav-item" @click="handleNavClick('option4')">用户管理</li>
+          <li 
+            :class="{ active: activeOption === 'option1' }" 
+            class="nav-item"
+            @click="handleNavClick('option1')">
+              <svg-icon name="data-source" style="margin-right: 8px;"/>
+              数据源
+          </li>
+          <li 
+          :class="{ active: activeOption === 'option2' }" 
+          class="nav-item" @click="handleNavClick('option2')">
+            <svg-icon name="application--data" style="margin-right: 8px;"/>
+          应用程序接口
+        </li>
+          <li 
+            :class="{ active: activeOption === 'option3' }" 
+            class="nav-item" @click="handleNavClick('option3')">
+            <svg-icon name="system-settings" style="margin-right: 8px;"/>
+            系统设置
+        </li>
+          <li 
+          :class="{ active: activeOption === 'option4' }" 
+          class="nav-item"
+           @click="handleNavClick('option4')">
+           <svg-icon name="user-management" style="margin-right: 8px;" width="20px" height="20px"/>
+           用户管理</li>
         </ul>
       </nav>
       <div class="user-info">
@@ -111,8 +137,14 @@ watch(route, (newRoute) => {
           <el-avatar src="/path/to/your/avatar.png" size="small"></el-avatar>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="showDialog = true">修改密码</el-dropdown-item>
-              <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="showDialog = true">
+                <svg-icon name="editPsd" style="margin-right: 8px;"/>
+                修改密码
+              </el-dropdown-item>
+              <el-dropdown-item @click="logout">
+                <svg-icon name="log-out" style="margin-right: 8px;"/>
+                退出登录
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

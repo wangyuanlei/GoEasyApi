@@ -130,6 +130,7 @@ const getData = ()=>{
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #ebeef5;
 }
 .el-card {
     width: 50%;
