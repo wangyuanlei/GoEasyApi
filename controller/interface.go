@@ -76,13 +76,15 @@ func GetInfo(ctx *gin.Context) {
 }
 
 func DeleteInterface(ctx *gin.Context) {
-	interface_id, ok := ctx.GetQuery("id")
-	if !ok {
+	var params struct {
+		Id string `json:"id"`
+	}
+	if err := ctx.ShouldBindJSON(&params); err != nil {
 		helper.ApiError(ctx, 601, "参数 id 未提交", nil)
 		return
 	}
 
-	err := InterfaceModel.DeleteInterface(interface_id)
+	err := InterfaceModel.DeleteInterface(params.Id)
 	if err != nil {
 		ShowModelError(ctx, err)
 		return
