@@ -22,6 +22,10 @@
                 <el-form-item label="链接地址" :label-width="formLabelWidth" prop="Dns">
                     <el-input v-model="formSetting.Dns" size="large" clearable />
                 </el-form-item>
+                <el-form-item label="参考值" :label-width="formLabelWidth">
+                    <!-- <el-input v-model="formSetting.DemoDns" size="large" readonly /> -->
+                    <span>{{ formSetting.DemoDns }}</span>
+                </el-form-item>
             </el-form>
             <div class="btn-box">
                 <el-button size="large" @click="defaultClick">设为默认值</el-button>
@@ -51,6 +55,7 @@ interface defineSetting {
     Description?: string | null,
     OrmType?: string | null,
     Dns?: string | null,
+    DemoDns?: string | null,
 };
 //默认参数
 const formSetting = ref<defineSetting>({
@@ -58,6 +63,7 @@ const formSetting = ref<defineSetting>({
     Description: '',
     OrmType:'',
     Dns:'',
+    DemoDns:''
 });
 
 const rules = {
@@ -84,13 +90,13 @@ const defaultClick =()=>{
 // 监听 OrmType 的变化
 watch(() => formSetting.value.OrmType, (newVal) => {
   if (newVal === 'mysql') {
-    formSetting.value.Dns = 'username:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local';
+    formSetting.value.DemoDns = 'username:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local';
   } else if (newVal === 'postgresql') {
-    formSetting.value.Dns = 'host=localhost user=your_username password=your_password dbname=your_db port=5432 sslmode=disable';
+    formSetting.value.DemoDns = 'host=localhost user=your_username password=your_password dbname=your_db port=5432 sslmode=disable';
   } else if (newVal === 'sqlserver') {
-    formSetting.value.Dns = 'sqlserver://username:password@localhost:1433?database=dbname';
+    formSetting.value.DemoDns = 'sqlserver://username:password@localhost:1433?database=dbname';
   } else if (newVal === 'sqlite') {
-    formSetting.value.Dns = './db.sql';
+    formSetting.value.DemoDns = './db.sql';
   }
 });
 //保存
