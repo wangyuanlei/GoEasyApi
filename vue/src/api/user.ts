@@ -65,11 +65,9 @@ class AuthAPI {
 		console.log('data',data);
 		data.user_id=id;
 		data.is_valid=Number(data.isValid);
+		data.dept_id=data.deptId
 		delete data.isValid;
-		// formData.append("name", data.name);
-		// formData.append("dept_id",data.deptId);
-		// formData.append("is_valid",Number(data.isValid));
-		// formData.append("user_id",id);
+		delete data.deptId;
 
 		return request<any>({
 			url: "/api/manger/set_user_info",

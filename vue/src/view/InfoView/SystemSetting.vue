@@ -66,7 +66,7 @@ import { ElMessage,ElMessageBox } from 'element-plus'
 import  sysSet  from '@/api/sysSet'
 const hasToken = <string>localStorage.getItem('accessToken');
 
-const formLabelWidth = '110px';
+const formLabelWidth = '110px';formLabelWidth
 const dialogFormVisible = ref(false);
 const dialogTitle = ref('');
 const loading = ref(false);

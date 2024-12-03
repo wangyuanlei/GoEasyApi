@@ -1,7 +1,7 @@
 <template>
     <div class="basic-information-wrapper">
-        <el-scrollbar height="570px">
-            <el-button type="default" class="back-btn" @click="back" size="large" style="margin-bottom: 20px;">&lt;  返回</el-button>
+        <div class="basic-information-title">{{ titleName }}</div>
+        <el-scrollbar height="calc(90vh)">
             <el-form :model="form" label-width="auto" v-loading="loading">
                 <el-col :span="10">
                     <el-form-item label="名称:" :label-width="formLabelWidth">
@@ -62,7 +62,7 @@
                     </el-col>
                 </el-row>
                 <el-col :span="10">
-                    <el-form-item label="是否开启token验证:" label-width="165px">
+                    <el-form-item label="是否开启token验证:" :label-width="formLabelWidth">
                         <el-radio-group v-model="form.TokenValidationEnabled">
                             <el-radio :value="1">是</el-radio>
                             <el-radio :value="2">否</el-radio>
@@ -71,7 +71,7 @@
                 </el-col>
                 <el-row :gutter="0">
                     <el-col :span="10">
-                        <el-form-item label="返回数据类型:" label-width="165px">
+                        <el-form-item label="返回数据类型:" :label-width="formLabelWidth">
                             <el-select v-model="form.ReturnType" placeholder="请选择返回数据类型" @change="form.ReturnValMode=''">
                                 <el-option label="insert" value="insert" />
                                 <el-option label="update" value="update" />
@@ -100,7 +100,7 @@
                 <el-col :span="22">
                     <el-form-item :label-width="formLabelWidth" label="请求参数:">
                         <el-table :data="form.Params" style="width: 100%;" :header-cell-style="{background: '#f5f7fa',color: '#909399'}">
-                            <el-table-column prop="Name" label="参数名称" width="130" header-align="center">
+                            <el-table-column prop="Name" label="参数名称" width="130" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Name" />
                                     <span v-else>{{ scope.row.Name }}</span>
@@ -120,7 +120,7 @@
                                     <span v-else>{{ scope.row.Type }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="Description" label="参数描述" header-align="center">
+                            <el-table-column prop="Description" label="参数描述" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Description" />
                                     <span v-else>{{ scope.row.Description }}</span>
@@ -143,19 +143,19 @@
                                     <span v-else>{{ scope.row.Default }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="Example" label="实例值" width="120" header-align="center">
+                            <el-table-column prop="Example" label="实例值" width="120" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Example" />
                                     <span v-else>{{ scope.row.Example }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="Regex" label="正则表达式" header-align="center">
+                            <el-table-column prop="Regex" label="正则表达式" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Regex" />
                                     <span v-else>{{ scope.row.Regex }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作" width="150" align="center" fixed="right" min-width="120">
+                            <el-table-column label="操作" width="150" align="center" fixed="right" min-width="120" >
                                 <template #default="scope">
                                     <el-button v-if="!scope.row.editing && !scope.row.newRow" type="primary" :icon="Edit" @click="editRow(scope.$index)" circle>
                                     </el-button>
@@ -181,10 +181,10 @@
                         />
                     </el-form-item>
                 </el-col>  
-
             </el-form>
             <div class="btn-box">
-                <el-button type="primary" @click="save"  class="save-btn" size="large">保存</el-button>          
+                <el-button type="primary" @click="save" class="save-btn" size="large">保存</el-button>          
+                <el-button type="default" class="back-btn" @click="back" size="large">返回</el-button>
             </div>
         </el-scrollbar>
     </div>
@@ -196,7 +196,7 @@ import { Plus,Edit,Select,Delete } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import SetApi from '@/api/setApi';
 const hasToken = <string>localStorage.getItem('accessToken');
-const formLabelWidth = '165px';
+const formLabelWidth = '220px';
 import { defineProps } from 'vue';
 
 import Codemirror from 'codemirror-editor-vue3';
@@ -221,6 +221,7 @@ const back= ()=>{
 }
 const loading = ref(false);
 
+const titleName = ref('');
 
 const cmOptions = {
       // 语言及语法模式
@@ -471,13 +472,15 @@ const save = () => {
 }
 // 监听 props.data 的变化
 watch(() => props.data, (newData, oldData) => {
-    console.log('newData', newData);
+    // console.log('newData', newData);
     if (newData) {
+        titleName.value = '接口详情';
         id.value = newData; // 修改这里
         // 调用接口获取详情数据
         fetchDetailData(newData);
     }else {
         // 清空数据
+        titleName.value = '新增接口';
         resetForm();
     }
 }, { immediate: true });
@@ -488,17 +491,28 @@ watch(() => props.data, (newData, oldData) => {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
-::v-deep(.add-btn) {
-    margin-top: 10px;
+.basic-information-title{
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 .btn-box{
-    
+    margin: 0 135px 60px 0;
+    display: flex;;
+    justify-content: end;
+
 }
-// ::v-deep(.el-button){
-//     margin-right: 100px;
-// }
-.back-btn,.save-btn{
-    margin-left: 85px;
+.add-btn{
+    margin-top: 20px;
 }
 </style>

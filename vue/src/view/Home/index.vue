@@ -59,7 +59,7 @@ const submitForm = () => {
       router.push('/Home/SetApi');
       break;
     case 'option3':
-      router.push('/Home/SystemSetting');
+      router.push('/Home/SysTemInfo');
       break;
     case 'option4':
         router.push('/Home/UserList');
@@ -88,7 +88,7 @@ watch(route, (newRoute) => {
     activeOption.value = 'option1';
   }else if(newRoute.path === '/Home/SetApi'){
     activeOption.value = 'option2';
-  }else if (newRoute.path === '/Home/SystemSetting') {
+  }else if (newRoute.path === '/Home/SysTemInfo') {
     activeOption.value = 'option3';
   } else if (newRoute.path === '/Home/UserList') {
     activeOption.value = 'option4';
@@ -100,7 +100,8 @@ watch(route, (newRoute) => {
   <div class="home">
     <header class="header">
       <div class="logo">
-        <img src="../../../public/images/login.jpeg" alt="Logo" />
+        <!-- <img src="../../../public/images/login.jpeg" alt="Logo" /> -->
+        <svg-icon name="index-top" style="margin-right: 8px;width:35px;height: 35px;"/>
       </div>
       <nav class="nav">
         <ul class="nav-list">
@@ -134,7 +135,8 @@ watch(route, (newRoute) => {
       <div class="user-info">
         <!-- <el-button type="primary" :icon="EditPen" circle @click="showDialog = true"></el-button> -->
         <el-dropdown>
-          <el-avatar src="/path/to/your/avatar.png" size="small"></el-avatar>
+          <!-- <el-avatar src="/path/to/your/avatar.png" size="small"></el-avatar> -->
+          <svg-icon name="setting" style="width: 21px;height: 21px;margin-right: 15px;"></svg-icon>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="showDialog = true">
@@ -242,5 +244,10 @@ watch(route, (newRoute) => {
   width: 32px;
   height: 32px;
   margin-left: 10px;
+}
+::v-deep(.el-dropdown .el-tooltip__trigger) {
+  outline: none; /* 移除默认的聚焦边框 */
+  border: none; /* 移除默认的边框 */
+  background-color: transparent; /* 移除默认的背景色 */
 }
 </style>

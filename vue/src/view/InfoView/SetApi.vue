@@ -1,15 +1,15 @@
 <template>
     <div class="set-api">
-        <div class="set-api-left">
-            <el-tabs :tab-position="'left'" class="demo-tabs" v-model="activeTab" @tab-change="handleTabChange">
+        <!-- <div class="set-api-left"> -->
+            <!-- <el-tabs :tab-position="'left'" class="demo-tabs" v-model="activeTab" @tab-change="handleTabChange">
                 <el-tab-pane label="接口列表" name="apiList"></el-tab-pane>
                 <el-tab-pane label="执行器" name="actuator" ></el-tab-pane>
-            </el-tabs>
-        </div>
+            </el-tabs> -->
+        <!-- </div> -->
         <div class="set-api-right">
-            <div class="set-api-info-header">
+            <!-- <div class="set-api-info-header">
                 创建API
-            </div>
+            </div> -->
             <div class="set-api-info-content">
                 <component :is="currentComponent" @switchToActuator="handleSwitchToActuator" :data="actuatorData"></component>
             </div>
@@ -25,7 +25,7 @@ import ApiInterfacelist from '@/components/ApiInterface.vue';
 const hasToken = <string>localStorage.getItem('accessToken');
     
 const currentComponent = ref<any>(ApiInterfacelist);
-const activeTab = ref('apiList');
+// const activeTab = ref('apiList');
 const actuatorData = ref<any>(null);
 const handleTabChange = (tabName: string) => {
   switch (tabName) {
@@ -41,7 +41,7 @@ const handleTabChange = (tabName: string) => {
 const handleSwitchToActuator = (data: any,type:any) => {
     // console.log('type',data);
     
-  activeTab.value = type;
+//   activeTab.value = type;
   handleTabChange(type);
   
   const actuatorId =data?data.Id:null;
@@ -55,14 +55,14 @@ const handleSwitchToActuator = (data: any,type:any) => {
 };
 onMounted(() => {
   // 初始化时加载基本信息组件
-  handleTabChange(activeTab.value);
+//   handleTabChange(activeTab.value);
 });
 
 </script>
 <style scoped lang="scss">
 .set-api{
     width: 100%;
-    height: calc(100% - 60px);
+    height: calc(100%);
     display: flex;
     background-color: #ebeef5;
 }
@@ -74,7 +74,7 @@ onMounted(() => {
     margin-top: 56px;
 }   
 .set-api-right{
-    width: calc(100% - 150px);
+    width: 100%;
     height: 100%;
 }
 .set-api-info-header{

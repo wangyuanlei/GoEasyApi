@@ -70,7 +70,7 @@ const handlePasswordEnter = () => {
     <div class="login">
       <div class="container">
         <div class="content">
-          <h4>{{ title }}登录</h4>
+          <h3>{{ title }}登录</h3>
           <div class="account-area">
             <el-form ref="formRef" :model="form" label-width="auto" :hide-required-asterisk="true">
               <el-form-item label="账号:" prop="account" :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]">
@@ -104,27 +104,19 @@ const handlePasswordEnter = () => {
     </div>
   </div>
 </template>
+
 <style lang="scss" scoped>
-%bg {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-}
 
 
 .login {
-  // min-height: 675px;
-  // height: 100vh;
-  // width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(../../../public/images/login.jpeg) ;
-  // @extend %bg;
-  background-size: 100% 100%;
+  background-image: url(../../../public/images/login1.jpeg) ;
+  background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* 背景图片固定 */
-  height: 100vh; /* 至少为视口高度 */
+  background-attachment: fixed;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -143,7 +135,7 @@ const handlePasswordEnter = () => {
   background: linear-gradient(230deg,
       rgba(53, 57, 74, 0) 0%,
       rgb(0, 0, 0) 100%);
-  h4{
+  h3{
     // color: #000;
     text-align: center;
   }
@@ -206,4 +198,3 @@ const handlePasswordEnter = () => {
 
 }
 </style>
-

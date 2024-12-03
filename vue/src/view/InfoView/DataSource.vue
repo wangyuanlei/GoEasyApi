@@ -1,39 +1,39 @@
 <template>
   <div class="dataSource-box">
-    <el-card v-loading="loading">
-            <div class="card-header">
-                <span>数据源</span>
-            </div>
-            <el-form :model="formSetting" :rules="rules" ref="formRef1">
-                <el-form-item label="数据库名称" :label-width="formLabelWidth" prop="DatabaseName">
-                    <el-input v-model="formSetting.DatabaseName" size="large" clearable />
-                </el-form-item>
-                <el-form-item label="描述" :label-width="formLabelWidth" prop="Description">
-                    <el-input v-model="formSetting.Description" size="large" clearable />
-                </el-form-item>
-                <el-form-item label="数据库类型" prop="OrmType" :label-width="formLabelWidth" required>
-                    <el-radio-group v-model="formSetting.OrmType">
-                        <el-radio :label="'mysql'">mysql</el-radio>
-                        <el-radio :label="'postgresql'">postgresql</el-radio>
-                        <el-radio :label="'sqlserver'">sqlserver</el-radio>
-                        <el-radio :label="'sqlite'">sqlite</el-radio>                        
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="链接地址" :label-width="formLabelWidth" prop="Dns">
-                    <el-input v-model="formSetting.Dns" size="large" clearable />
-                </el-form-item>
-                <el-form-item label="参考值" :label-width="formLabelWidth">
-                    <!-- <el-input v-model="formSetting.DemoDns" size="large" readonly /> -->
-                    <span>{{ formSetting.DemoDns }}</span>
-                </el-form-item>
-            </el-form>
-            <div class="btn-box">
-                <el-button size="large" @click="defaultClick">设为默认值</el-button>
-                <el-button size="large" type="primary" @click="saveClick">保存</el-button>
-            </div>
-        </el-card>
+    <el-card v-loading="loading" class="custom-card">
+      <!-- <div class="custom-card"> -->
+      <div class="card-header">
+        <span>数据源</span>
+      </div>
+      <el-form :model="formSetting" :rules="rules" ref="formRef1">
+        <el-form-item label="数据库名称" :label-width="formLabelWidth" prop="DatabaseName">
+          <el-input v-model="formSetting.DatabaseName" size="large" clearable />
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth" prop="Description">
+          <el-input v-model="formSetting.Description" size="large" clearable />
+        </el-form-item>
+        <el-form-item label="数据库类型" prop="OrmType" :label-width="formLabelWidth" required>
+          <el-radio-group v-model="formSetting.OrmType">
+            <el-radio :label="'mysql'">mysql</el-radio>
+            <el-radio :label="'postgresql'">postgresql</el-radio>
+            <el-radio :label="'sqlserver'">sqlserver</el-radio>
+            <el-radio :label="'sqlite'">sqlite</el-radio>                        
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="链接地址" :label-width="formLabelWidth" prop="Dns">
+          <el-input v-model="formSetting.Dns" size="large" clearable />
+        </el-form-item>
+        <el-form-item label="参考值" :label-width="formLabelWidth">
+          <span>{{ formSetting.DemoDns }}</span>
+        </el-form-item>
+      </el-form>
+      <div class="btn-box">
+        <el-button size="large" @click="defaultClick">设为默认值</el-button>
+        <el-button size="large" type="primary" @click="saveClick">保存</el-button>
+      </div>
+    </el-card>
+  <!-- </div> -->
   </div>
-
 </template>
 <script lang="ts" setup>
 import { ref ,onMounted , watch} from 'vue';
@@ -105,9 +105,10 @@ const saveClick =()=>{
 
   ElMessage.success('保存成功');
   getData()
-}).finally(() => {
-        loading.value = false; // 开始加载
-    });
+})
+// .finally(() => {
+//         loading.value = false; // 开始加载
+//     });
 }
 onMounted(()=>{
   getData()
@@ -116,43 +117,62 @@ onMounted(()=>{
 const getData = ()=>{
   loading.value = true; // 开始加载
   dataSource.getDatas(hasToken).then((res:any) => {
-    
+    loading.value = false; ;
   Object.assign(alldata, res.data);
   // console.log('alldataalldata',alldata);
   formSetting.value={
     ...res.data
   }
   
-}).finally(() => {
-        loading.value = false; // 开始加载
-        // ElMessage.error('获取配置信息失败');
-    });
+})
+// .finally(() => {
+//         loading.value = false; // 开始加载
+//         // ElMessage.error('获取配置信息失败');
+//     });
 }
 </script>
 <style scoped lang="scss">
-.dataSource-box{
+.dataSource-box {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #ebeef5;
+  // align-items: center;
+  background: linear-gradient(135deg, #f5f5f5, #ebeef5); /* 渐变背景 */
+  padding: 20px; /* 增加内边距 */
 }
-.el-card {
-    width: 50%;
-    margin-bottom: 30px;
+
+.custom-card {
+  width: 90%;
+  height: 70%;
+  // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+  // border-radius: 12px; /* 圆角 */
+  // transition: transform 0.3s ease-in-out; /* 平滑过渡效果 */
 }
 
 .card-header {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 12px;
+  text-align: center;
+  font-size: 25px;
+  margin-bottom: 30px;
+  color: #333; /* 深色文字 */
 }
-.btn-box{
+
+.btn-box {
   display: flex;
   justify-content: end;
+  margin-top: 20px; /* 增加顶部间距 */
 }
+
 .el-radio__label {
   text-transform: none;
-} 
+}
+
+/* 可以添加一些图标或辅助信息 */
+.icon-box {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  color: #999;
+}
 </style>

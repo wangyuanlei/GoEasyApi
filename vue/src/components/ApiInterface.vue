@@ -4,7 +4,7 @@
         <div class="search-left">
         </div>
         <div class="search-right">
-          <el-button type="primary" @click="addInterface">+ 添加新接口</el-button>
+          <el-button type="primary" @click="addInterface" size="large">+ 添加新接口</el-button>
         </div>
       </div>
       <div class="overall-plugin-bottom">
@@ -87,11 +87,6 @@ const addInterface = () => {
   padding: 20px;
   box-sizing: border-box;
 }
-/* .overall-plugin-table /deep/ .is-leaf {
-    background-color: var(--v-table-bg-color);
-    color: var(--v-table-color);
-    font-weight: bold;
-} */
 
 .overall-plugin-top {
   display: flex;

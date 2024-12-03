@@ -37,6 +37,11 @@ const routes: Array<RouteRecordRaw> = [
         path:'/Home/SetApi',
         name:'SetApi',
         component:()=>import('@/view/InfoView/SetApi.vue')
+       },
+       {
+        path:'/Home/SysTemInfo',
+        name:'SysTemInfo',
+        component:()=>import('@/view/InfoView/SysTemInfo.vue')
       },
     ]
   },
