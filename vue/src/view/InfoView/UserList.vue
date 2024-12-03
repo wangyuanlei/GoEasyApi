@@ -70,7 +70,7 @@
       <el-form-item v-if="!isEdit" label="密码:" prop="password" :label-width="formLabelWidth" required>
           <el-input v-model="form.password" autocomplete="off" show-password></el-input>
       </el-form-item>
-      <el-form-item label="部门ID" prop="deptId" :label-width="formLabelWidth" required>
+      <el-form-item label="部门" prop="deptId" :label-width="formLabelWidth" required>
         <el-input v-model="form.deptId" autocomplete="off" />
       </el-form-item>
       <el-form-item label="状态" prop="isValid" :label-width="formLabelWidth" required>
