@@ -2,7 +2,7 @@
 import { ref,onMounted,watch } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
-import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElAvatar,ElMessage,ElMessageBox } from 'element-plus';
+import { ElDropdown, ElDropdownMenu, ElDropdownItem,ElMessage,ElMessageBox } from 'element-plus';
 import HomeApi from "@/api/home";
 // import SvgIcon from '@/components/svg/svg.vue';
 const activeOption = ref<string | null>(null);
@@ -140,7 +140,7 @@ watch(route, (newRoute) => {
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="showDialog = true">
-                <svg-icon name="editPsd" style="margin-right: 8px;"/>
+                <svg-icon name="set-possword" style="margin-right: 8px;"/>
                 修改密码
               </el-dropdown-item>
               <el-dropdown-item @click="logout">

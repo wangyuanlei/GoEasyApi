@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="overall-plugin-bottom">
-        <el-table :data="tableData" style="width: 100%; height: 100%;" border stripe :header-cell-style="{background: '#f5f7fa',color: '#909399'}">
+        <el-table :data="tableData" style="width: 100%; height: 100%;" border stripe :header-cell-style="{background: '#f5f7fa',color: '#909399'}" empty-text="没有数据">
           <el-table-column type="index" label="序号" width="60" align="left" header-align="center"></el-table-column>
           <el-table-column prop="Path" label="接口路径" width="100" header-align="center"></el-table-column>
           <el-table-column prop="Method" label="请求方式" width="100" header-align="center" align="center"></el-table-column>

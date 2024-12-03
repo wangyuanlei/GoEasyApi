@@ -6,11 +6,11 @@
           <el-button type="primary" @click="getTableData" :icon="Search" circle />
         </div>
         <div class="search-right">
-          <el-button type="primary" @click="dialogFormVisible = true">+ 添加新用户</el-button>
+          <el-button type="primary" @click="dialogFormVisible = true" size="large">+ 添加新用户</el-button>
         </div>
       </div>
       <div class="search-user-bottom">
-        <el-table :data="tableData" style="width: 100%; height: 98%;" border stripe>
+        <el-table :data="tableData" style="width: 100%; height: 98%;" border stripe empty-text="没有数据">
           <el-table-column type="index" label="序号" width="60" align="left" header-align="center"></el-table-column>
           <el-table-column prop="Name" label="用户姓名" header-align="center"></el-table-column>
           <el-table-column prop="IsValid" label="状态" header-align="center" align="center">
@@ -53,9 +53,11 @@
         </el-table>
 
       </div>
-      <el-pagination background style="text-align: center;margin-top: 30px;height: 20px;" v-model:current-page="currentPage"
-        v-model:page-size="pageSize" :page-sizes="[15, 20, 30, 50]" layout="total, sizes, prev, pager, next, jumper"
-        :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      <el-config-provider :locale="zhCn">
+        <el-pagination background style="text-align: center;margin-top: 30px;height: 20px;" v-model:current-page="currentPage"
+          v-model:page-size="pageSize" :page-sizes="[15, 20, 30, 50]" layout="total, sizes, prev, pager, next, jumper"
+          :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      </el-config-provider>
     </div>
     <el-dialog v-model="dialogFormVisible" :title="dialogTitle" width="500" @close="resetForm">
     <el-form :model="form" :rules="rules" ref="formRef">
@@ -93,6 +95,7 @@ import { ref, watch ,onMounted} from 'vue'
 import UserManage from "@/api/user";
 import { ElMessageBox,ElMessage } from 'element-plus'
 import { Delete,Edit,Setting,Search} from '@element-plus/icons-vue';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 // 模糊搜索框
 const input = ref('')
 const inputRef =ref(null);

@@ -48,6 +48,7 @@ const alldata ={
     Description: '',
     OrmType:'',
     Dns:'',
+    DemoDns:''
 }
 //定义类型
 interface defineSetting {
@@ -85,7 +86,20 @@ const defaultClick =()=>{
   formSetting.value={
     ...alldata
   }
-
+  switch (formSetting.value.OrmType) {
+    case 'mysql':
+      formSetting.value.DemoDns = 'username:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local';
+      break;
+    case 'postgresql':
+      formSetting.value.DemoDns = 'host=localhost user=your_username password=your_password dbname=your_db port=5432 sslmode=disable'
+      break;
+    case'sqlserver':
+      formSetting.value.DemoDns ='sqlserver://username:password@localhost:1433?database=dbname';
+      break;
+    case'sqlite':
+      formSetting.value.DemoDns = './db.sql';
+      break;
+  }
 }
 // 监听 OrmType 的变化
 watch(() => formSetting.value.OrmType, (newVal) => {

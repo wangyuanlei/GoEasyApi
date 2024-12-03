@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="overall-plugin-bottom">
-        <el-table :data="tableData" style="width: 100%; height: 100%;" v-loading="loading" border stripe :header-cell-style="{background: '#f5f7fa',color: '#909399'}">
+        <el-table :data="tableData" style="width: 100%; height: 100%;" v-loading="loading" border stripe :header-cell-style="{background: '#f5f7fa',color: '#909399'}" empty-text="没有数据">
           <el-table-column type="index" label="序号" min-width="30" align="center" header-align="center"></el-table-column>
           <el-table-column prop="IP" label="Ip" header-align="center"></el-table-column>
           <el-table-column prop="Description" label="描述" show-overflow-tooltip header-align="center"></el-table-column>
@@ -105,6 +105,7 @@ const getListData = (type: number) => {
 //     loading.value = false; // 加载完成
 //   });
   }else{
+    loading.value = false;
     tableData.value = [];
   }
 };
