@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="search-user-bottom">
-        <el-table :data="tableData" style="width: 100%; height: 98%;" border stripe empty-text="没有数据">
+        <el-table :data="tableData" style="width: 100%; height: 98%;" border :header-cell-style="{background: '#f5f7fa',color: '#909399'}" stripe empty-text="没有数据">
           <el-table-column type="index" label="序号" width="60" align="left" header-align="center"></el-table-column>
           <el-table-column prop="Name" label="用户姓名" header-align="center"></el-table-column>
           <el-table-column prop="IsValid" label="状态" header-align="center" align="center">
