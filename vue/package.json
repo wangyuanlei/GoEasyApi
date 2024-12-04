@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/axios": "^0.9.36",
     "axios": "^1.7.7",
     "codemirror": "^5.65.18",
     "codemirror-editor-vue3": "^2.8.0",
@@ -23,6 +22,7 @@
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@types/axios": "^0.9.36",
     "@types/codemirror": "^5.60.15",
     "@types/es6-promise": "^0.0.33",
     "@types/node": "^22.9.0",

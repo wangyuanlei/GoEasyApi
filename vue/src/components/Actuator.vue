@@ -454,7 +454,7 @@ const save = () => {
     if (id.value) {
         // 编辑
         loading.value = true;
-        SetApi.update(hasToken, formData).then(res => {
+        SetApi.update(hasToken, formData).then(_ => {
             loading.value = false;
             ElMessage({
                 type: 'success',
@@ -467,7 +467,7 @@ const save = () => {
         // delete formData.name;
 
         loading.value = true;
-        SetApi.addInterface(hasToken, formData).then(res => {
+        SetApi.addInterface(hasToken, formData).then(_ => {
             loading.value = false;
             ElMessage({
                 type: 'success',
@@ -477,7 +477,7 @@ const save = () => {
     }
 }
 // 监听 props.data 的变化
-watch(() => props.data, (newData, oldData) => {
+watch(() => props.data, (newData) => {
     // console.log('newData', newData);
     if (newData) {
         titleName.value = '接口详情';
