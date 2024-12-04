@@ -102,6 +102,7 @@ watch(route, (newRoute) => {
       <div class="logo">
         <!-- <img src="../../../public/images/login.jpeg" alt="Logo" /> -->
         <svg-icon name="index-top" style="margin-right: 8px;width:35px;height: 35px;"/>
+        <span>GoEasyApi</span>
       </div>
       <nav class="nav">
         <ul class="nav-list">
@@ -190,7 +191,11 @@ watch(route, (newRoute) => {
   color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
+.logo{
+  display: flex;
+  align-items: center;
+  font-family: fantasy;
+}
 .logo img {
   height: 30px;
 }

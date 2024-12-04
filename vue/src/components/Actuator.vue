@@ -99,7 +99,7 @@
                 </el-row>
                 <el-col :span="22">
                     <el-form-item :label-width="formLabelWidth" label="请求参数:">
-                        <el-table :data="form.Params" style="width: 100%;" :header-cell-style="{background: '#f5f7fa',color: '#909399'}">
+                        <el-table :data="form.Params" style="width: 100%;" :header-cell-style="{background: '#f5f7fa',color: '#909399'}" empty-text="添加参数">
                             <el-table-column prop="Name" label="参数名称" width="130" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Name" />
