@@ -45,14 +45,29 @@ GoEasyAPI是一套基于go语言开发的自动化服务端API生成平台, 用�
    3. go build -o GoEasyApi 生成可执行文件
 
 ### windiws下运行
-   1. 拷贝文件 config.yml, db.sql, GoEasyApi.exe 到 指定目录下
-   2. 双击 GoEasyApi.exe 运行程序
+   1. 拷贝文件 config.yml, db.sql, GoEasyApi_win.exe 到 指定目录下
+   2. 双击 GoEasyApi_win.exe 运行程序
 
 ### linux下运行
-   1. 拷贝文件 config.yml, db.sql, GoEasyApi, start.sh 到 指定目录下
+   1. 拷贝文件 config.yml, db.sql, GoEasyApi_linux, start.sh 到 指定目录下
    2. 运行程序
         ```shell
         sh start.sh  
         ```
+### 编译运行
+   docker build -t go_easy_api .
+   docker run -d -p 8008:8008 go_easy_api
+
+## 使用说明
+1. 打开浏览器, 输入 http://localhost:8008
+2. 点击登录, 输入用户名和密码, 默认用户名和密码都是admin
+
+## 接口说明
+1. POST /user/register 注册接口
+2. POST /user/login 登录接口
+3. GET /user/user_info 获取用户信息接口
+4. POST /api/xx/xxx 请求接口
+5. GET /api/xx/xxx 请求接口
+
 
 觉得不错的话，别忘 **star** 👏
