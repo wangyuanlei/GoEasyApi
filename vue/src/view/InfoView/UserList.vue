@@ -278,12 +278,12 @@ const handleDelete = (row: any) => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-      ElMessage.success(row.UserId.toString());
-    // UserManage.deleteUser(hasToken, row.UserId.toString()).then(res => {
-    //   ElMessage.success('删除成功');
-    // }).catch(() => {
-    //   ElMessage.info('已取消删除');
-    // });
+    UserManage.deleteUser(hasToken, row.UserId.toString()).then(res => {
+      ElMessage.success('删除成功');
+      getTableData();
+    }).catch(() => {
+      ElMessage.info('已取消删除');
+    });
   })
 }
 </script>

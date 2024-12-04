@@ -158,10 +158,10 @@ watch(route, (newRoute) => {
     <el-dialog title="修改密码" v-model="showDialog" width="30%" @close="resetForm">
       <el-form label-width="80px" :rules="rules" :model="form" ref="formRef">
         <el-form-item label="老密码" prop="oldPass" required>
-          <el-input v-model="form.oldPass" type="password" placeholder="请输入老密码"></el-input>
+          <el-input v-model="form.oldPass" type="password" show-password placeholder="请输入老密码"></el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="newPass" required>
-          <el-input v-model="form.newPass" type="password" placeholder="请输入新密码"></el-input>
+          <el-input v-model="form.newPass" type="password" show-password placeholder="请输入新密码"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>

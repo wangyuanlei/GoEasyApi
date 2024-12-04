@@ -8,8 +8,6 @@ class AuthAPI {
 			page_size: data.page_size,
 			name: data.search,
 		}
-		// console.log('formobj=',formobj);
-
 		return request<any>({
 			url: `/api/manger/get_user_list`,
 			method: "get",
@@ -23,13 +21,11 @@ class AuthAPI {
 	 * 用户注册
 	 */
 	static createUser(AuthorizeCode: string, data: any) {
-		// console.log('data', data);
 		const formData = new FormData();
 		formData.append("name", data.name);
 		formData.append("deptId", data.deptId);
 		formData.append("account", data.account);
 		formData.append("password", data.password);
-
 		return request<any>({
 			url: "/api/user/register",
 			method: "post",
@@ -43,14 +39,12 @@ class AuthAPI {
  * 获取用户信息
  */
 	static getUser(AuthorizeCode: string, data: any) {
-		console.log('data', data);
 		let formobj = {
 			user_id: data,
 		}
 		return request<any>({
 			url: "/api/manger/get_user_info",
 			method: "get",
-			//   data: formData,
 			params: formobj,
 			headers: {
 				token: AuthorizeCode,
@@ -61,8 +55,6 @@ class AuthAPI {
 	 * 编辑保存
 	 */
 	static updateUser(AuthorizeCode: string,id:string,data:any) {
-		const formData = new FormData();
-		console.log('data',data);
 		data.user_id=id;
 		data.is_valid=Number(data.isValid);
 		data.dept_id=data.deptId
@@ -82,16 +74,15 @@ class AuthAPI {
 	 * 删除
 	 */
 	static deleteUser(AuthorizeCode: string, data: string) {
-		// console.log(data);
+		console.log('data=',data);
 		const formData = new FormData();
 		formData.append("user_id", data);
 		return request<any>({
-		  url: "/user/set_delete",
+		  url: "/api/manger/delete_user",
 		  method: "post",
 		  data: formData,
 		  headers: {
 			token: AuthorizeCode,
-			"Content-Type":"multipart/form-data"
 		  },
 		});
 	  }
@@ -99,7 +90,6 @@ class AuthAPI {
 	 * 用户修改密码
 	 */
 	static updtPsd(AuthorizeCode: string, id: string, password:string) {
-		// console.log(data);
 		const formData = new FormData();
 		formData.append("user_id", id);
 		formData.append("password", password);
