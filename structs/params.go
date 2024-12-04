@@ -82,3 +82,8 @@ type SetUserPasswordParams struct {
 	UserId   string `json:"user_id"`
 	Password string `json:"password"`
 }
+
+//用户信息删除结构
+type DeleteUserParams struct {
+	UserId string `json:"user_id"`
+}

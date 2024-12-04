@@ -199,3 +199,20 @@ func GetUserList(ctx *gin.Context) {
 		"list":       list,
 	})
 }
+
+// 删除用户信息
+func DeleteUserInfo(ctx *gin.Context) {
+	var params structs.DeleteUserParams
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		helper.ApiError(ctx, 601, "用户id信息错误", nil)
+		return
+	}
+
+	err := UserModel.DeleteUser(params.UserId)
+	if err != nil {
+		ShowModelError(ctx, err)
+		return
+	}
+
+	helper.ApiSuccess(ctx, true)
+}

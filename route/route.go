@@ -25,6 +25,7 @@ func RegisterRoutes(r *gin.Engine) {
 	r.POST("/manger/set_user_pass", controller.CheckAdminLogin, controller.AdminChangeUserPassord) //管理员设置用户密码
 	r.POST("/manger/set_user_info", controller.CheckAdminLogin, controller.ChangeUserInfo)         //管理员设置用户信息
 	r.POST("/manger/set_user_is_valid", controller.CheckAdminLogin, controller.SetUserIsValid)     //管理员设置用户是否有效
+	r.POST("/manger/delete_user", controller.CheckAdminLogin, controller.DeleteUserInfo)           //管理员删除用户信息
 
 	r.POST("/manger/reset_pass", controller.CheckAdminLogin, controller.SetSuperAdminPasswordHandler) //设置超级管理员密码
 	//名单类型配置

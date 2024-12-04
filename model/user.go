@@ -151,3 +151,8 @@ func (u *User) GetUserList(page int, pageSize int, deptId string, name string, i
 
 	return users, total, nil
 }
+
+// 删除用户信息
+func (u *User) DeleteUser(userId string) error {
+	return DB.Where("user_id = ?", userId).Delete(&User{}).Error
+}
