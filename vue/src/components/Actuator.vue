@@ -202,13 +202,18 @@ import { defineProps } from 'vue';
 import Codemirror from 'codemirror-editor-vue3';
 
 import 'codemirror/lib/codemirror.css'
-// 引入主题 可以从 codemirror/theme/ 下引入多个
-import 'codemirror/theme/idea.css'
-// 引入语言模式 可以从 codemirror/mode/ 下引入多个
+
 import 'codemirror/mode/sql/sql.js';
 
-// 代码提示功能 具体语言可以从 codemirror/addon/hint/ 下引入多个
+import 'codemirror/theme/dracula.css';  // 黑色主题
+
+// 代码提示功能
 import 'codemirror/addon/hint/show-hint.css';
+// 引入代码提示功能
+import 'codemirror/addon/hint/sql-hint.js'; // SQL语言提示功能
+
+import 'codemirror/addon/hint/show-hint.js'; // 代码提示核心功能
+
 
 import { defineEmits } from 'vue';
 
@@ -223,31 +228,32 @@ const loading = ref(false);
 
 const titleName = ref('');
 
-const cmOptions = {
-      // 语言及语法模式
-      mode: 'text/x-sql',
-      // 主题
-      theme: 'dracula', // 'idea'
-      // 显示函数
-      line: true,
-      // 显示行号
-      lineNumbers: true,
-      // 软换行
-      lineWrapping: true,
-      // tab宽度
-      tabSize: 4,
-      // 代码提示功能
-      hintOptions: {
-            // 避免由于提示列表只有一个提示信息时，自动填充
-            completeSingle: false,
-            // 不同的语言支持从配置中读取自定义配置 sql语言允许配置表和字段信息，用于代码提示
-            tables: {
-              "BPSuv": ["DocEntry", "Subject", "DocStatus","Remarks"],
-              "BPSuvA": ["DocEntry", "LineNum", "Question","QstType"],
-              "BPSuvB": ["DocEntry", "LineNum", "UserID","UserName"],
-            },
-          },
-    };
+const cmOptions = ref({
+      mode: 'text/x-sql', // 使用SQL语法高亮
+      theme: 'dracula',   // 使用黑色主题
+      lineNumbers: true,  // 显示行号
+      lineWrapping: true, // 自动换行
+      tabSize: 4,         // 设置Tab键宽度
+      matchBrackets: true,	//括号匹配
+        extraKeys: {
+            "Ctrl-Space": "autocomplete"
+        },
+        hintOptions: {
+            completeSingle: false
+        }
+    });
+
+    const editor = ref<any>(); // 用 ref 保存编辑器实例
+    // 监听 editor 实例的变化
+    watch(() => editor.value, (newEditor) => {
+      if (newEditor) {
+        const cmInstance = newEditor.cminstance;  // 获取 CodeMirror 实例
+        cmInstance.on("inputRead", () => {
+          cmInstance.showHint();  // 显示代码提示
+        });
+      }
+    });
+    // }
 
 const props = defineProps({
     data: Object

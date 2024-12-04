@@ -49,14 +49,14 @@ service.interceptors.response.use(
 		if (response.data.code=='501'|| response.data.code=='502') {
 			router.push('/')
 		}
-		ElMessage.error(response.data.message || "系统出错");
+		ElMessage.error(response.data.message);
 		return Promise.reject(new Error(response.data || "Error"));
 	},
 	(error: any) => {
 		// 异常处理
 		if (error.response.data) {
 			const { Msg } = error.response.data;
-			ElMessage.error(Msg || "系统出错");
+			ElMessage.error(Msg);
 		}
 		return Promise.reject(error.message);
 	}
