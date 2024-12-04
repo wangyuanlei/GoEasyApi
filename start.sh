@@ -1,7 +1,7 @@
 #!/bin/bash
  
 # 假设你的Go应用名为myapp
-APP_NAME=GoEasyApi
+APP_NAME=GoEasyApi_linux
  
 # 检查应用是否已经在运行
 if pgrep -x "$APP_NAME" >/dev/null
