@@ -62,8 +62,8 @@ router.beforeEach((to,from,next) => {
     next();
   }
 })
-router.afterEach((to, from) => {
-  document.title = 'XXX系统';
-})
+// router.afterEach((to, from) => {
+//   document.title = 'XXX系统';
+// })
  
 export default router

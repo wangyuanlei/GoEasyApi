@@ -74,7 +74,7 @@ class AuthAPI {
 	 * 删除
 	 */
 	static deleteUser(AuthorizeCode: string, data: string) {
-		console.log('data=',data);
+		// console.log('data=',data);
 		const formData = new FormData();
 		formData.append("user_id", data);
 		return request<any>({
