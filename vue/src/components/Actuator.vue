@@ -335,11 +335,7 @@ const resetForm = () => {
         Params: [] as RequestParam[],
     };
 }
-watch(()=>form.value.ReturnType,(newData)=>{
-    console.log('newData=', newData);
-    
-    // form.value.ReturnValMode = '';
-})
+
 const addRequestParam = () => {
     // verifyParams();
     if(!verifyParams()){
@@ -410,7 +406,7 @@ const verifyParams =()=>{
     }
 }
 const save = () => {
-    console.log(id.value);
+    // console.log(id.value);
 
     // 验证参数
     if (!verifyParams()) {
