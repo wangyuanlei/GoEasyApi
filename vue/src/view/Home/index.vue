@@ -38,7 +38,7 @@ const submitForm = () => {
   formRef.value?.validate((valid: boolean) => {
     if (valid) {
                   //新增保存   
-        HomeApi.changePsd(hasToken, form.value).then(res => {
+        HomeApi.changePsd(hasToken, form.value).then(() => {
           ElMessage.success('密码修改成功');
           showDialog.value = false;
           resetForm();
