@@ -183,8 +183,8 @@
                 </el-col>  
             </el-form>
             <div class="btn-box">
-                <el-button type="primary" @click="save" class="save-btn" size="large">保存</el-button>          
                 <el-button type="default" class="back-btn" @click="back" size="large">返回</el-button>
+                <el-button type="primary" class="save-btn" @click="save" size="large">保存</el-button>          
             </div>
         </el-scrollbar>
     </div>
