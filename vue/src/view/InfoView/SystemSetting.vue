@@ -24,7 +24,7 @@
                             </div>
                             <div class="card-right ml-3">
                                 <!-- <i class="iconfont icon-xiugai text-2xl text-blue-500 cursor-pointer mr-2" @click="editItem(item, index)"></i> -->
-                                <i class="iconfont icon-htmal5icon17 text-2xl text-red-500 cursor-pointer" @click="deleteItem(item, index)"></i>
+                                <i class="iconfont icon-htmal5icon17 text-2xl text-red-500 cursor-pointer" @click="deleteItem(item)"></i>
                             </div>
                         </el-card>
                         </div>
@@ -81,7 +81,7 @@ const selectedListType = ref<number>(0) // 默认选中黑名单
 const getListData = (type: number) => {
   loading.value = true; // 开始加载
   // getType.value = type.toString();
-  sysSet.SetType(hasToken,type.toString()).then(res => {
+  sysSet.SetType(hasToken,type.toString()).then(() => {
     }).catch(err => {
       console.log('err', err);
     })
@@ -92,9 +92,12 @@ const getListData = (type: number) => {
         Description: item.Description
       }));
     // console.log('res', res.data);
-  }).finally(() => {
+  }).catch(() => {
     loading.value = false; // 加载完成
-  });
+
+  })
+  // .finally(() => {
+  // });
   }else if (type === 2) {
     sysSet.getWhiteList(hasToken).then(res => {
     // console.log('res', res.data);
@@ -102,9 +105,12 @@ const getListData = (type: number) => {
         IP: item.IP,
         Description: item.Description
       }));
-  }).finally(() => {
+  }).catch(() => {
     loading.value = false; // 加载完成
-  });
+  })
+  // .finally(() => {
+  //   loading.value = false; // 加载完成
+  // });
   }else{
     defaultData.value = [];
   }
@@ -132,14 +138,14 @@ const addToList = (type: string) => {
 dialogFormVisible.value = true;
 dialogTitle.value = type === 'black' ? '添加黑名单' : '添加白名单';
 };
-const deleteItem = (item: any, index: number) => {
+const deleteItem = (item: any) => {
     if(selectedListType.value===1){
         ElMessageBox.confirm('此操作将永久该黑名单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         }).then(() => {
-            sysSet.deleteBlack(hasToken,item.IP).then(res => {
+            sysSet.deleteBlack(hasToken,item.IP).then(() => {
             ElMessage({
             message: '删除成功',
             type: 'success'
@@ -160,7 +166,7 @@ const deleteItem = (item: any, index: number) => {
             cancelButtonText: '取消',
             type: 'warning',
         }).then(() => {
-            sysSet.deleteWhite(hasToken,item.IP).then(res => {
+            sysSet.deleteWhite(hasToken,item.IP).then(() => {
             ElMessage({
             message: '删除成功',
             type: 'success'
@@ -177,17 +183,6 @@ const deleteItem = (item: any, index: number) => {
 
     }
 
-};
-const editItem = (item: any, index: number) => {
-dialogFormVisible.value = true;
-form.value.ip=item.IP;
-form.value.description=item.Description;
-if(selectedListType.value===1){
-    dialogTitle.value = '编辑黑名单'
-
-}else{
-    dialogTitle.value = '编辑白名单'
-}
 };
 
 //弹窗逻辑
@@ -218,7 +213,7 @@ const rules = {
   ],
 };
 const blackSave =()=>{
-    sysSet.addBlack(hasToken,form.value).then(res => {
+    sysSet.addBlack(hasToken,form.value).then(() => {
         ElMessage({
           message: '添加成功',
           type: 'success'
@@ -231,9 +226,12 @@ const blackSave =()=>{
         message: '添加失败',
         type: 'error'
       })
-  }).finally(() => {
+  }).catch(() => {
     loading.value = false; // 加载完成
   });
+  // .finally(() => {
+  //   loading.value = false; // 加载完成
+  // });
 }
 const whiteSave =()=>{
     // loading.value = true;
@@ -244,7 +242,7 @@ const whiteSave =()=>{
         })
         return
     }
-    sysSet.addWhite(hasToken,form.value).then(res => {
+    sysSet.addWhite(hasToken,form.value).then(() => {
         ElMessage({
           message: '添加成功',
           type: 'success'
@@ -258,9 +256,12 @@ const whiteSave =()=>{
         message: '添加失败',
         type: 'error'
       })
-  }).finally(() => {
+  }).catch(() => {
     loading.value = false; // 加载完成
   });
+  // .finally(() => {
+  //   loading.value = false; // 加载完成
+  // });
 }
 </script>
 <style scoped>

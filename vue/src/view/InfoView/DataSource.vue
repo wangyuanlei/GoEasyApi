@@ -115,7 +115,7 @@ watch(() => formSetting.value.OrmType, (newVal) => {
 });
 //保存
 const saveClick =()=>{
-  dataSource.saveData(hasToken,formSetting.value).then((res:any) => {
+  dataSource.saveData(hasToken,formSetting.value).then(() => {
 
   ElMessage.success('保存成功');
   getData()

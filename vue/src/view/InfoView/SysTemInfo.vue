@@ -81,7 +81,7 @@ watch(selectedListType, (newVal) => {
 const getListData = (type: number) => {
   loading.value = true; // 开始加载
 
-  sysSet.SetType(hasToken,type.toString()).then(res => {
+  sysSet.SetType(hasToken,type.toString()).then(() => {
     }).catch(err => {
       console.log('err', err);
     })
@@ -135,7 +135,7 @@ const deleteItem = (item: any) => {
         cancelButtonText: '取消',
         type: 'warning',
         }).then(() => {
-            sysSet.deleteBlack(hasToken,item.IP).then(res => {
+            sysSet.deleteBlack(hasToken,item.IP).then(() => {
             ElMessage({
             message: '删除成功',
             type: 'success'
@@ -156,7 +156,7 @@ const deleteItem = (item: any) => {
             cancelButtonText: '取消',
             type: 'warning',
         }).then(() => {
-            sysSet.deleteWhite(hasToken,item.IP).then(res => {
+            sysSet.deleteWhite(hasToken,item.IP).then(() => {
             ElMessage({
             message: '删除成功',
             type: 'success'
@@ -203,7 +203,7 @@ const rules = {
   ],
 };
 const blackSave =()=>{
-    sysSet.addBlack(hasToken,form.value).then(res => {
+    sysSet.addBlack(hasToken,form.value).then(() => {
         ElMessage({
           message: '添加成功',
           type: 'success'
@@ -230,7 +230,7 @@ const whiteSave =()=>{
         })
         return
     }
-    sysSet.addWhite(hasToken,form.value).then(res => {
+    sysSet.addWhite(hasToken,form.value).then(() => {
         ElMessage({
           message: '添加成功',
           type: 'success'

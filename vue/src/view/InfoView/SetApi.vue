@@ -17,12 +17,11 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import Actuator from '@/components/Actuator.vue';
 import ApiInterfacelist from '@/components/ApiInterface.vue';
 
 
-const hasToken = <string>localStorage.getItem('accessToken');
     
 const currentComponent = ref<any>(ApiInterfacelist);
 // const activeTab = ref('apiList');

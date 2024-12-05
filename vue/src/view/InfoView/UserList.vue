@@ -151,10 +151,13 @@ const getTableData = () => {
     // console.log('res', res.data.list);
     tableData.value = res.data.list;
     total.value = res.data.total;
-  })
-  .finally(() => {
+  }).catch(err => {
+    console.log('err', err);
     loading.value = false; // 加载完成
-  });
+
+  })
+  // .finally(() => {
+  // });
 };
 onMounted(()=>{
     getTableData();
@@ -211,7 +214,7 @@ const changePassword =(row: any)=>{
     inputPattern: /^.{6,20}$/,
     inputErrorMessage: '密码长度6-20位',
   }).then(({ value }) => {
-    UserManage.updtPsd(hasToken, row.UserId.toString() ,value).then(res => {
+    UserManage.updtPsd(hasToken, row.UserId.toString() ,value).then(() => {
       ElMessage.success('密码修改成功');
     })
   })
@@ -221,9 +224,9 @@ const handleSave = () => {
   formRef.value.validate((valid: boolean) => {
     if (valid) {
       if (isEdit.value && currentUserId.value) {
-        console.log('form.value', form.value);
+        // console.log('form.value', form.value);
         
-        UserManage.updateUser(hasToken, currentUserId.value, form.value).then(res => {
+        UserManage.updateUser(hasToken, currentUserId.value, form.value).then(() => {
           ElMessage.success('修改成功');
           dialogFormVisible.value = false;
           getTableData();
@@ -233,7 +236,7 @@ const handleSave = () => {
         });
       }else{
         //新增保存   
-        UserManage.createUser(hasToken, form.value).then(res => {
+        UserManage.createUser(hasToken, form.value).then(() => {
           // console.log('res', res);
           dialogFormVisible.value = false;
           ElMessage.success('用户添加成功');
@@ -278,7 +281,7 @@ const handleDelete = (row: any) => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    UserManage.deleteUser(hasToken, row.UserId.toString()).then(res => {
+    UserManage.deleteUser(hasToken, row.UserId.toString()).then(()=> {
       ElMessage.success('删除成功');
       getTableData();
     }).catch(() => {

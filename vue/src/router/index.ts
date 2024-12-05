@@ -53,7 +53,7 @@ const router = createRouter({
 })
  
 // 路由守卫
-router.beforeEach((to,from,next) => {
+router.beforeEach((to,_,next) => {
   // next()
   const hasToken = localStorage.getItem('accessToken');
   if (!hasToken && to.name !== 'LoginView') {
@@ -62,8 +62,4 @@ router.beforeEach((to,from,next) => {
     next();
   }
 })
-// router.afterEach((to, from) => {
-//   document.title = 'XXX系统';
-// })
- 
 export default router

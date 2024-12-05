@@ -38,7 +38,7 @@
     </div>
   </template>
 <script lang="ts" setup>
-import { ref, watch ,onMounted} from 'vue'
+import { ref , onMounted} from 'vue'
 import SetApi from '@/api/setApi';
 import { ElMessageBox,ElMessage } from 'element-plus'
 import { Delete,Edit} from '@element-plus/icons-vue';
@@ -67,7 +67,7 @@ const handleDelete = (row:any) => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
-    SetApi.deleteInterface(hasToken,row.Id).then(res => {
+    SetApi.deleteInterface(hasToken,row.Id).then(() => {
       ElMessage.success('删除成功');
       getTableData();
     })
