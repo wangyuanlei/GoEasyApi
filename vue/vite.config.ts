@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 export default defineConfig({
-  base:'/static/',
+  base: process.env.NODE_ENV === 'production' ? '/static/' : '/',
   plugins: [
     vue()
     ,createSvgIconsPlugin({
