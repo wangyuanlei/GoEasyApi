@@ -3,7 +3,7 @@ import request from "@/utils/request";
 class AuthAPI {
 	static getDatas(AuthorizeCode: string) {
 		return request<any>({
-			url: `/api/manger/db/get_conf`,
+			url: `/manger/db/get_conf`,
 			method: "get",
 			headers: {
 				token: AuthorizeCode,
@@ -21,7 +21,7 @@ class AuthAPI {
 		formData.append("dns", data.Dns);
         // console.log('formData', formData);
 		return request<any>({
-		  url: "/api/manger/db/set_conf",
+		  url: "/manger/db/set_conf",
 		  method: "post",
 		  data: formData,
 		  headers: {

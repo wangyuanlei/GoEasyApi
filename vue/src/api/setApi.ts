@@ -6,7 +6,7 @@ class AuthAPI {
 		// console.log('formobj=',formobj);
 
 		return request<any>({
-			url: `/api/manger/interface/list`,
+			url: `/manger/interface/list`,
 			method: "get",
 			headers: {
 				token: AuthorizeCode,
@@ -21,7 +21,7 @@ class AuthAPI {
 			id: data,
 		}
 		return request<any>({
-			url: "/api/manger/interface/info",
+			url: "/manger/interface/info",
 			method: "get",
 			//   data: formData,
 			params: formobj,
@@ -36,7 +36,7 @@ class AuthAPI {
 	static update(AuthorizeCode: string,data:any) {
 		// console.log('data',data);
 		return request<any>({
-			url: "/api/manger/interface/update",
+			url: "/manger/interface/update",
 			method: "post",
 			data: data,
 			headers: {
@@ -50,7 +50,7 @@ class AuthAPI {
 	static addInterface(AuthorizeCode: string, data: any) {
 		console.log('data',data);
 		return request<any>({
-			url: "/api/manger/interface/add",
+			url: "/manger/interface/add",
 			method: "post",
 			data: data,
 			headers: {
@@ -66,7 +66,7 @@ class AuthAPI {
 		const formData = new FormData();
 		formData.append("id", data);
 		return request<any>({
-		  url: "/api/manger/interface/delete",
+		  url: "/manger/interface/delete",
 		  method: "post",
 		  data: formData,
 		  headers: {
@@ -85,7 +85,7 @@ class AuthAPI {
 		formData.append("password", password);
 		console.log('formData', formData);
 		return request<any>({
-		  url: "/api/manger/set_user_pass",
+		  url: "/manger/set_user_pass",
 		  method: "post",
 		  data: formData,
 		  headers: {

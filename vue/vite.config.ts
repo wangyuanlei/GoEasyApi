@@ -27,12 +27,10 @@ export default defineConfig({
   server:{
     // 配置代理
     proxy:{
-      "/api":{
+      "/manger":{
         target:'http://127.0.0.1:8008',//设置代理目标
         changeOrigin:true,//是否改变请求源地址
-        rewrite: (path) => {
-          return path.replace(/\/api/, '')
-      }
+ 
       }
     }
   },

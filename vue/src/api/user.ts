@@ -9,7 +9,7 @@ class AuthAPI {
 			name: data.search,
 		}
 		return request<any>({
-			url: `/api/manger/get_user_list`,
+			url: `/manger/get_user_list`,
 			method: "get",
 			params: formobj,
 			headers: {
@@ -43,7 +43,7 @@ class AuthAPI {
 			user_id: data,
 		}
 		return request<any>({
-			url: "/api/manger/get_user_info",
+			url: "/manger/get_user_info",
 			method: "get",
 			params: formobj,
 			headers: {
@@ -62,7 +62,7 @@ class AuthAPI {
 		delete data.deptId;
 
 		return request<any>({
-			url: "/api/manger/set_user_info",
+			url: "/manger/set_user_info",
 			method: "post",
 			data: data,
 			headers: {
@@ -78,7 +78,7 @@ class AuthAPI {
 		const formData = new FormData();
 		formData.append("user_id", data);
 		return request<any>({
-		  url: "/api/manger/delete_user",
+		  url: "/manger/delete_user",
 		  method: "post",
 		  data: formData,
 		  headers: {
@@ -95,7 +95,7 @@ class AuthAPI {
 		formData.append("password", password);
 		console.log('formData', formData);
 		return request<any>({
-		  url: "/api/manger/set_user_pass",
+		  url: "/manger/set_user_pass",
 		  method: "post",
 		  data: formData,
 		  headers: {

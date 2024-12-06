@@ -6,7 +6,7 @@ class AuthAPI {
 		formData.append("old_pass", data.oldPass);
 		formData.append("new_pass", data.newPass);
 		return request<any>({
-			url: "/api/manger/reset_pass",
+			url: "/manger/reset_pass",
 			method: "post",
 			data: formData,
 			headers: {

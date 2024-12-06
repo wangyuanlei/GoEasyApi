@@ -5,7 +5,7 @@ class AuthAPI {
 	static getBlackList(AuthorizeCode: string) {
 
 		return request<any>({
-			url: `/api/manger/black_list/get_list`,
+			url: `/manger/black_list/get_list`,
 			method: "get",
 			headers: {
 				token: AuthorizeCode,
@@ -16,7 +16,7 @@ class AuthAPI {
 	static getWhiteList(AuthorizeCode: string) {
 
 		return request<any>({
-			url: `/api/manger/whilt_list/get_list`,
+			url: `/manger/whilt_list/get_list`,
 			method: "get",
 			headers: {
 				token: AuthorizeCode,
@@ -33,7 +33,7 @@ class AuthAPI {
 		formData.append("description", data.description);
 
 		return request<any>({
-			url: "/api/manger/black_list/add",
+			url: "/manger/black_list/add",
 			method: "post",
 			data: formData,
 			headers: {
@@ -51,7 +51,7 @@ class AuthAPI {
 		formData.append("description", data.description);
 
 		return request<any>({
-			url: "/api/manger/whilt_list/add",
+			url: "/manger/whilt_list/add",
 			method: "post",
 			data: formData,
 			headers: {
@@ -72,7 +72,7 @@ class AuthAPI {
 		formData.append("user_id",id);
 
 		return request<any>({
-			url: "/api/manger/set_user_info",
+			url: "/manger/set_user_info",
 			method: "post",
 			data: formData,
 			headers: {
@@ -88,7 +88,7 @@ class AuthAPI {
 		const formData = new FormData();
 		formData.append("ip", data);
 		return request<any>({
-		  url: "/api/manger/black_list/del",
+		  url: "/manger/black_list/del",
 		  method: "post",
 		  data: formData,
 		  headers: {
@@ -104,7 +104,7 @@ class AuthAPI {
 		const formData = new FormData();
 		formData.append("ip", data);
 		return request<any>({
-		  url: "/api/manger/whilt_list/del",
+		  url: "/manger/whilt_list/del",
 		  method: "post",
 		  data: formData,
 		  headers: {
@@ -118,7 +118,7 @@ class AuthAPI {
 	 */
 	  static getType(AuthorizeCode: string) {
 		return request<any>({
-		  url: "/api/manger/list/get_type",
+		  url: "/manger/list/get_type",
 		  method: "get",
 		  headers: {
 			token: AuthorizeCode,
@@ -134,7 +134,7 @@ class AuthAPI {
 		const formData = new FormData();
 		formData.append("list_type", data);
 		return request<any>({
-		  url: "/api/manger/list/set_type",
+		  url: "/manger/list/set_type",
 		  method: "post",
 		  data: formData,
 		  headers: {

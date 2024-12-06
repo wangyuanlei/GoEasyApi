@@ -8,7 +8,7 @@ class AuthAPI {
 		formData.append("account", data.account);
 		formData.append("pass", data.pwd);
 		return request<any>({
-			url: "/api/manger/login",
+			url: "/manger/login",
 			method: "post",
 			data: formData,
 			headers: {
