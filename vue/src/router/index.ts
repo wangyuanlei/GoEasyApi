@@ -1,5 +1,5 @@
 // 路由配置
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
  
 // 首页
 import HomeView from '@/view/Home/index.vue'
@@ -48,7 +48,8 @@ const routes: Array<RouteRecordRaw> = [
 ]
  
 const router = createRouter({
-  history:createWebHistory(),
+  history:createWebHashHistory(),
+  // history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
  

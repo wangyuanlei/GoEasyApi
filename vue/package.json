@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitejs/plugin-legacy": "^6.0.0",
     "axios": "^1.7.9",
     "codemirror": "^5.65.18",
     "codemirror-editor-vue3": "^2.8.0",
