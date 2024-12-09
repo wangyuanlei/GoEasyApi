@@ -23,20 +23,20 @@ GoEasyAPI是一套基于go语言开发的自动化服务端API生成平台, 用�
 
  
 ## 目录结构
-    controller       //控制器层
-    core            //核心
-    libraries       //功能库
-    helper          //辅助库
-    model           //模块库
-    structs        //各种结构定义
-    router          //路由层
-    static          //静态资源
-    vue            //前端
-    main.go         //启动文件
-    config.yaml       //配置文件
-    db.sql           //数据库文件
-    GoEasyApi       linux下编译好的服务程序
-    GoEasyApi.exe   windows下编译好的服务程序
+    controller             //控制器层
+    core                   //核心
+    libraries              //功能库
+    helper                 //辅助库
+    model                  //模块库
+    structs                //各种结构定义
+    router                 //路由层
+    static                 //静态资源
+    vue                    //前端代码
+    main.go                //启动文件
+    config.yaml            //配置文件
+    db.sql                 //数据库文件
+    GoEasyApi_linux        //linux下编译好的服务程序
+    GoEasyApi_win.exe      //windows下编译好的服务程序
 
 ## 编译和运行
 ### 编译
