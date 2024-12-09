@@ -148,17 +148,17 @@ const getData = ()=>{
 <style scoped lang="scss">
 .dataSource-box {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   display: flex;
   justify-content: center;
   // align-items: center;
   background: linear-gradient(135deg, #f5f5f5, #ebeef5); /* 渐变背景 */
-  padding: 20px; /* 增加内边距 */
+  padding: 80px 20px 20px 20px; /* 增加内边距 */
 }
 
 .custom-card {
   width: 90%;
-  height: 70%;
+  // height: 70%;
   // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影 */
   // border-radius: 12px; /* 圆角 */
   // transition: transform 0.3s ease-in-out; /* 平滑过渡效果 */

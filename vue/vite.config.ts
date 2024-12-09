@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import legacy from '@vitejs/plugin-legacy'
 import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 export default defineConfig({
@@ -8,10 +7,6 @@ export default defineConfig({
   base: './', // 使用自定义环境变量 VITE_BASE_URL
   plugins: [
     vue(),
-    legacy({
-      targets: ['defaults', 'not IE 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
-    }),
     createSvgIconsPlugin({
       // 指定需要缓存的图标文件夹
       iconDirs: [path.resolve(process.cwd(), "src/assets/svgs")],
