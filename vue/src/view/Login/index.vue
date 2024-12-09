@@ -112,7 +112,7 @@ const handlePasswordEnter = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(../../../public/images/login1.jpeg) ;
+  background-image: url(/public/images/login1.jpeg) ;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

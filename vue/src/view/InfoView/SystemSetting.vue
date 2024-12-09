@@ -300,7 +300,7 @@ const whiteSave =()=>{
 .dashed {
     border-top: 1px solid var(--el-border-color);
 }
-.center-box /deep/ .el-radio-group {
+:deep(.center-box .el-radio-group) {
     flex-direction: row;
     align-items: baseline;
 }

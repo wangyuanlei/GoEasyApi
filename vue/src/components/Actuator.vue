@@ -171,14 +171,8 @@
                 </el-col>  
                 <el-col :span="15">
                     <el-form-item label="语言" :label-width="formLabelWidth">
-                        <Codemirror
-                            v-model:value="form.SqlContent"
-                            :options="cmOptions"
-                            ref="editor"
-                            border
-                            height="300"
-                            width="100%"
-                        />
+                        <div id="editor" style="height: 300px; width: 100%;"></div>
+                        <!-- <el-input type="textarea" v-model="form.SqlContent" :rows="6" placeholder="请输入sql语句"/> -->
                     </el-form-item>
                 </el-col>  
             </el-form>
@@ -191,7 +185,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch,onMounted } from 'vue';
 import { Plus,Edit,Select,Delete } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import SetApi from '@/api/setApi';
@@ -199,20 +193,9 @@ const hasToken = <string>localStorage.getItem('accessToken');
 const formLabelWidth = '220px';
 import { defineProps } from 'vue';
 
-import Codemirror from 'codemirror-editor-vue3';
 
-import 'codemirror/lib/codemirror.css'
 
-import 'codemirror/mode/sql/sql.js';
-
-import 'codemirror/theme/dracula.css';  // 黑色主题
-
-// 代码提示功能
-import 'codemirror/addon/hint/show-hint.css';
-// 引入代码提示功能
-import 'codemirror/addon/hint/sql-hint.js'; // SQL语言提示功能
-
-import 'codemirror/addon/hint/show-hint.js'; // 代码提示核心功能
+import ace from 'ace-builds';
 
 
 import { defineEmits } from 'vue';
@@ -228,21 +211,15 @@ const loading = ref(false);
 
 const titleName = ref('');
 
-const cmOptions = ref({
-      mode: 'text/x-sql', // 使用SQL语法高亮
-      theme: 'dracula',   // 使用黑色主题
-      lineNumbers: true,  // 显示行号
-      lineWrapping: true, // 自动换行
-      tabSize: 4,         // 设置Tab键宽度
-      matchBrackets: true,	//括号匹配
-        extraKeys: {
-            "Ctrl-Space": "autocomplete"
-        },
-        hintOptions: {
-            completeSingle: false
-        }
+    onMounted(() => {
+        const editor = ace.edit('editor');
+      editor.setTheme('ace/theme/dracula'); // 黑色主题
+      editor.session.setMode('ace/mode/sql'); // SQL 模式
+      editor.setOptions({
+        enableBasicAutocompletion: true,  // 启用基础自动补全
+        enableLiveAutocompletion: true,   // 启用实时补全
+      });
     });
-
     const editor = ref<any>(); // 用 ref 保存编辑器实例
     // 监听 editor 实例的变化
     watch(() => editor.value, (newEditor) => {

@@ -298,7 +298,7 @@ const handleDelete = (row: any) => {
   box-sizing: border-box;
   background-color: #ebeef5;
 }
-.search-user-table /deep/ .is-leaf {
+:deep(.search-user-table .is-leaf)  {
     background-color: var(--v-table-bg-color);
     color: var(--v-table-color);
     font-weight: bold;

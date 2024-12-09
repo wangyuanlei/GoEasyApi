@@ -4,7 +4,20 @@ import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 export default defineConfig({
   // base: process.env.NODE_ENV === 'production' ? '/static/' : './',
-  base: './', // 使用自定义环境变量 VITE_BASE_URL
+  base: './',
+  optimizeDeps: {
+    include: ['ace-builds']
+  },
+  build: {
+    chunkSizeWarningLimit:1000,
+    terserOptions: {
+      compress: {
+        drop_console: true,  // 删除 console.log
+      },
+      mangle: false,  // 禁用变量混淆，避免混淆关键代码
+    },
+  },
+
   plugins: [
     vue(),
     createSvgIconsPlugin({
