@@ -143,7 +143,7 @@
                                     <span v-else>{{ scope.row.Default }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="Example" label="实例值" width="120" header-align="center" align="center">
+                            <el-table-column prop="Example" label="示例值" width="120" header-align="center" align="center">
                                 <template #default="scope">
                                     <el-input v-if="scope.row.editing" v-model="scope.row.Example" />
                                     <span v-else>{{ scope.row.Example }}</span>
@@ -185,7 +185,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch,onMounted } from 'vue';
+import { ref, watch,onMounted,nextTick } from 'vue';
 import { Plus,Edit,Select,Delete } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import SetApi from '@/api/setApi';
@@ -209,6 +209,7 @@ const back= ()=>{
 }
 const loading = ref(false);
 
+const editorValue = ref('');
 const titleName = ref('');
 
     onMounted(() => {
@@ -218,19 +219,15 @@ const titleName = ref('');
       editor.setOptions({
         enableBasicAutocompletion: true,  // 启用基础自动补全
         enableLiveAutocompletion: true,   // 启用实时补全
+        fontSize: "16px",
+      });
+      editor.setValue(editorValue.value);
+        // 监听编辑器内容变化
+        editor.getSession().on('change', () => {
+        // 每次编辑器内容变化时更新 form.SqlContent
+        form.value.SqlContent = editor.getValue();
       });
     });
-    const editor = ref<any>(); // 用 ref 保存编辑器实例
-    // 监听 editor 实例的变化
-    watch(() => editor.value, (newEditor) => {
-      if (newEditor) {
-        const cmInstance = newEditor.cminstance;  // 获取 CodeMirror 实例
-        cmInstance.on("inputRead", () => {
-          cmInstance.showHint();  // 显示代码提示
-        });
-      }
-    });
-    // }
 
 const props = defineProps({
     data: Object
@@ -240,8 +237,14 @@ const fetchDetailData = (data: any) => {
     loading.value = true;
     SetApi.getInterfaceInfo(hasToken, data).then(res => {
         loading.value = false;
-        // console.log('res=', res);
         form.value = res.data;
+        editorValue.value = res.data.SqlContent;
+        nextTick(() => {
+          const editor = ace.edit('editor');
+          editor.setValue(editorValue.value);
+          editor.selection.clearSelection();
+        });
+    
     });
 }
 const id = ref<any>('');
@@ -423,7 +426,6 @@ const save = () => {
     if (formData.returntype !== 'insert' && formData.returntype !== 'update' || formData.returntype === '') {
         delete formData.returnvalmode;
     }
-
     if (id.value) {
         // 编辑
         loading.value = true;
@@ -433,6 +435,10 @@ const save = () => {
                 type: 'success',
                 message: '编辑成功',
             });
+            // 返回上一页
+            emit('switchToActuator', null,'apiList');
+            // 清空数据
+            resetForm();
         });
     } else {
         // 新增
@@ -446,6 +452,10 @@ const save = () => {
                 type: 'success',
                 message: '新增成功',
             });
+            // 返回上一页
+            emit('switchToActuator', null,'apiList');
+            // 清空数据
+            resetForm();
         });
     }
 }
